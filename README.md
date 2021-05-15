@@ -32,7 +32,7 @@ It is found under the parent directory of HKLM64.
 
 The second breakpoint leads us here:
 
-```
+```asm
 008CE8F0  043DCFE8  L"HKLM64"
 008CE8F4  00000006  
 008CE8F8  00000008  
@@ -53,7 +53,8 @@ It appears that 0x03 disables windefender, while 0x02 means to enable.
 A quick google search brings us here: https://answers.microsoft.com/en-us/protect/forum/protect_defender-protect_start-windows_10/how-to-disable-windows-defender-in-windows-10/b834d36e-6da8-42a8-85f6-da9a520f05f2
 
 The next one is also in HKLM:  
-```
+
+```asm
 76122FF0 | 8945 CC                  | mov dword ptr ss:[ebp-34],eax           | [ebp-34]:L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run"
 76122FF3 | 66:8B01                  | mov ax,word ptr ds:[ecx]                | ecx:&L"SecurityHealth"
 ```
@@ -63,7 +64,7 @@ Seems to be set to 3 or off
 Now we will look at RegCreateKey  
 There seems to be a regisatry opened at 
 
-```
+```asm
 EDX : 043DCD78     L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection"
 EIP : 7591E420     <advapi32.RegCreateKeyExW>
 ```
@@ -74,8 +75,9 @@ We have 2 flags set:
 DisableRealtimeMonitoring as a REG_DWORD set to 0x01
 DpaDisabled as REG_DWORD set to 0x0
 
-Another one opened here:
-```
+Another one opened here:  
+
+```asm
 008CEFF8  043EB4C8  L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run"
 ```
 
