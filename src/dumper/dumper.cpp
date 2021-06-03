@@ -6,8 +6,8 @@
 // RegEnumValueW [done]
 // RegDeleteValueW [done]
 // RegDeleteKeyW [done]
-// RegSetValueExW [templated]
-// RegCreateKeyExW [templated]
+// RegSetValueExW [done]
+// RegCreateKeyExW [done]
 // RegConnectRegistryW 
 // RegEnumKeyExW
 // RegCloseKey
@@ -193,13 +193,10 @@ namespace DetourHelper
 
 uintptr_t get_func_addr(HMODULE mod, const char* name)
 {
-  auto ret = reinterpret_cast<uintptr_t>(GetProcAddress(mod, name));
-
+  auto ret = reinterpret_cast<uintptr_t>(GetProcAddress(mod, name))
   if (!ret)
-    std::cout << "failed to get " << name << std::endl;
-
-  std::cout << "obtained " << name << " from " << mod << std::endl;
-
+    std::cout << "failed to get " << name << std::endl
+  std::cout << "obtained " << name << " from " << mod << std::endl
   return ret;
 }
 
@@ -226,6 +223,8 @@ void thread_main()
   RegHooks::regdeletekeyw_addr = get_func_addr(advapi32, "RegDeleteKeyW");
   RegHooks::regdeletevaluew_addr = get_func_addr(advapi32, "RegDeleteValueW");
   RegHooks::regenumvaluew_addr = get_func_addr(advapi32, "RegEnumValueW");
+  RegHooks::regsetvalue_addr = get_func_addr(advapi32, "RegSetValueExW");
+  RegHooks::RegCreateKeyExW_addr = get_func_addr(advapi32, "RegCreateKeyExW");
 
   std::cout << "imports resolved\npreparing to hook" << std::endl;
 
@@ -234,16 +233,20 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::regsetvalue_addr, RegHooks::hk_RegSetValueExW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegCreateKeyExW_addr, RegHooks::hk_RegCreateKeyExW);
 
 
   // native hooks
   // pretty redunant dont need to enable them
   // 
-  //RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
-  //DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::enable_def_helper);
-  //
-  //RegHooks::handle_command_addr = (uintptr_t)GetModuleHandleA(0) + 0x5F48E;
-  //DetourHelper::perf_hook((PVOID*)&RegHooks::handle_command_addr, RegHooks::HandleCommand);
+#if 0
+  RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::enable_def_helper);
+  
+  RegHooks::handle_command_addr = (uintptr_t)GetModuleHandleA(0) + 0x5F48E;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::handle_command_addr, RegHooks::HandleCommand);
+#endif
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
