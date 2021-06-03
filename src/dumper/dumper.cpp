@@ -57,6 +57,17 @@ namespace RegHooks
     return (reinterpret_cast<enable_def_helper_t>(enable_def_help_addr))(pThis, a2, a3);
   }
 
+  // WM_COMMAND handler
+  // base+05F48E
+  using handle_command_t = char(__stdcall*)(int, UINT, UINT);
+  uintptr_t handle_command_addr;
+
+  char __stdcall HandleCommand(int a1, UINT wparam, UINT lparam)
+  {
+    std::cout << "handlecommand(" << wparam << ", " << lparam << ")" << std::endl;
+    return (reinterpret_cast<handle_command_t>(handle_command_addr))(a1, wparam, lparam);
+  }
+
   // hook for RegEnumValueW
   // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regenumvaluew
   //
@@ -187,8 +198,11 @@ void thread_main()
   // activation hooks
   // pretty redunant dont need to enable them
   // 
-  RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
-  DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::enable_def_helper);
+  //RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
+  //DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::enable_def_helper);
+
+  RegHooks::handle_command_addr = (uintptr_t)GetModuleHandleA(0) + 0x5F48E;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::handle_command_addr, RegHooks::HandleCommand);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
