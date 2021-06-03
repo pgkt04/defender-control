@@ -10,7 +10,7 @@
 #include <iostream>
 #include <Windows.h>
 #include <Psapi.h>
-
+#include <string>
 #include <detours.h>
 #pragma comment(lib, "detours.lib")
 

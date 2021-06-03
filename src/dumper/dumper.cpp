@@ -18,9 +18,22 @@
 // RegQueryValueExW
 // RegOpenKeyExW
 // reformat printing if succesfully hooked.
-// use wide cout format [done]
+// implement wstring
 
 #include "pch.h"
+
+std::wstring string_to_wide(const std::string& s)
+{
+  std::wstring temp(s.length(), L' ');
+  std::copy(s.begin(), s.end(), temp.begin());
+  return temp;
+}
+
+std::string wide_to_string(const std::wstring& s) {
+  std::string temp(s.length(), ' ');
+  std::copy(s.begin(), s.end(), temp.begin());
+  return temp;
+}
 
 namespace RegHooks
 {
@@ -41,8 +54,8 @@ namespace RegHooks
     LPDWORD lpcbData
   )
   {
-    std::wcout << "[RegEnumValueW]" << std::endl;
-    //std::wcout << "lpValueName: " << lpValueName << std::endl;
+    std::cout << "[RegEnumValueW]" << std::endl;
+    std::cout << "lpValueName: " << wide_to_string(lpValueName).c_str() << std::endl;
 
     return (reinterpret_cast<regenumvaluew_t>(regenumvaluew_addr))
       (hKey, dwIndex, lpValueName, lpcchValueName, lpReserved, lpType, lpData, lpcbData);
@@ -61,7 +74,7 @@ namespace RegHooks
   {
     auto original = (reinterpret_cast<regdeletevaluew_t>(regdeletevaluew_addr))(hKey, lpValueName);
 
-    std::wcout << "RegDeleteValueW(" << hKey << ", " << lpValueName << ");" << std::endl;
+    std::cout << "RegDeleteValueW(" << hKey << ", " << lpValueName << ");" << std::endl;
 
     return original;
   }
@@ -78,7 +91,7 @@ namespace RegHooks
   )
   {
     auto original = (reinterpret_cast<regdeletekeyw_t>(regdeletekeyw_addr))(hKey, lpSubKey);
-    std::wcout << "RegDeleteValueW(" << hKey << ", " << lpSubKey << ");" << std::endl;
+    std::cout << "RegDeleteValueW(" << hKey << ", " << lpSubKey << ");" << std::endl;
     return original;
   }
 }
@@ -110,9 +123,9 @@ uintptr_t get_func_addr(HMODULE mod, const char* name)
   auto ret = reinterpret_cast<uintptr_t>(GetProcAddress(mod, name));
 
   if (!ret)
-    std::wcout << "failed to get " << name << std::endl;
+    std::cout << "failed to get " << name << std::endl;
 
-  std::wcout << "obtained " << name << " from " << mod << std::endl;
+  std::cout << "obtained " << name << " from " << mod << std::endl;
 
   return ret;
 }
@@ -133,7 +146,7 @@ void thread_main()
 
   if (!advapi32)
   {
-    std::wcout << "advapi32.dll not found" << std::endl;
+    std::cout << "advapi32.dll not found" << std::endl;
     return;
   }
 
@@ -141,7 +154,7 @@ void thread_main()
   RegHooks::regdeletevaluew_addr = get_func_addr(advapi32, "RegDeleteValueW");
   RegHooks::regenumvaluew_addr = get_func_addr(advapi32, "RegEnumValueW");
 
-  std::wcout << "imports resolved\npreparing to hook" << std::endl;
+  std::cout << "imports resolved\npreparing to hook" << std::endl;
 
   DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
