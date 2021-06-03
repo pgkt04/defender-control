@@ -1,7 +1,7 @@
 // this is to poc for dumping out registry files as part 2 of the reversal
 //
 // TO-DO:
-// import detours
+// import detours, will need to recompile 32 bit
 // write hook functions
 // inject and write findings
 // list of functions to hook:
