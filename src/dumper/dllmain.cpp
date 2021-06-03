@@ -1,7 +1,7 @@
 // this is to poc for dumping out registry files as part 2 of the reversal
 //
 // TO-DO:
-// import detours, will need to recompile 32 bit
+// import detours, will need to recompile 32 bit	
 // write hook functions
 // inject and write findings
 // list of functions to hook:
@@ -21,7 +21,21 @@
 
 void perf_hook()
 {
+	// example code from last ctf
+	// will add code base for x64 and x32 support, as well as setup empty 
+	// project to do this stuff quicky?
+#if 0
+	using LoadStr_t = int(*)(HINSTANCE, UINT, LPSTR, int);
+	uint64_t loadstr_addr;
 
+	// perform hooking
+	loadstr_addr = (uint64_t)GetProcAddress(GetModuleHandleA("User32.dll"), "LoadStringA");
+
+	DetourTransactionBegin();
+	DetourUpdateThread(GetCurrentThread());
+	DetourAttach(&(PVOID&)loadstr_addr, hk_loadstr);
+	DetourTransactionCommit();
+#endif
 }	
 
 void thread_main()
