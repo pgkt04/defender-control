@@ -1,4 +1,6 @@
 # defender-control
+Open sourced windows defender manager
+
 ## what is this project?  
 we all know that disabling windefender is a pain going through countless registries.  
 the next easiest solution is to use freeware and currently the most popular one is by sordum. (i won't link here - you can find it on the first google result)
