@@ -149,7 +149,7 @@ namespace RegHooks
     PHKEY, LPDWORD);
   uintptr_t RegCreateKeyExW_addr;
 
-  LSTATUS hk_RegCreateKeyExW(
+  LSTATUS __stdcall hk_RegCreateKeyExW(
     HKEY                        hKey,
     LPCWSTR                     lpSubKey,
     DWORD                       Reserved,
@@ -168,6 +168,10 @@ namespace RegHooks
     return (reinterpret_cast<RegCreateKeyExW_t>(regsetvalue_addr))
       (hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition);
   }
+
+  // RegConnectRegistryW
+  // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regconnectregistryw
+  //
 }
 
 namespace DetourHelper
