@@ -193,10 +193,10 @@ namespace DetourHelper
 
 uintptr_t get_func_addr(HMODULE mod, const char* name)
 {
-  auto ret = reinterpret_cast<uintptr_t>(GetProcAddress(mod, name))
+  auto ret = reinterpret_cast<uintptr_t>(GetProcAddress(mod, name));
   if (!ret)
-    std::cout << "failed to get " << name << std::endl
-  std::cout << "obtained " << name << " from " << mod << std::endl
+    std::cout << "failed to get " << name << std::endl;
+  std::cout << "obtained " << name << " from " << mod << std::endl;
   return ret;
 }
 
@@ -243,7 +243,7 @@ void thread_main()
 #if 0
   RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
   DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::enable_def_helper);
-  
+
   RegHooks::handle_command_addr = (uintptr_t)GetModuleHandleA(0) + 0x5F48E;
   DetourHelper::perf_hook((PVOID*)&RegHooks::handle_command_addr, RegHooks::HandleCommand);
 #endif
