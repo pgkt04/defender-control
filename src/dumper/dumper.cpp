@@ -37,6 +37,26 @@ std::string wide_to_string(const std::wstring& s) {
 
 namespace RegHooks
 {
+  // helper to check when we enable defender 
+  // address: 0046AB70
+  // base: 400000
+  // rel: base+6AB70
+  // we can try a thiscall variant or cdecltype
+  // https://www.unknowncheats.me/forum/849605-post6.html
+  // int __thiscall enable_def_helper(int *this, int a2, _DWORD *a3)
+  //
+  using enable_def_helper_t = int(__thiscall*)(void*, int, DWORD*);
+  uintptr_t enable_def_help_addr;
+
+  int __fastcall enable_def_helper(void* pThis, void* edx, int a2, DWORD* a3)
+  {
+    std::cout << "activation routine" << std::endl;
+    auto v37 = *(DWORD*)(a2 + 8);
+    std::cout << "v37: " << v37 << std::endl;
+
+    return (reinterpret_cast<enable_def_helper_t>(enable_def_help_addr))(pThis, a2, a3);
+  }
+
   // hook for RegEnumValueW
   // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regenumvaluew
   //
@@ -55,7 +75,9 @@ namespace RegHooks
   )
   {
     std::cout << "[RegEnumValueW]" << std::endl;
-    std::cout << "lpValueName: " << wide_to_string(lpValueName).c_str() << std::endl;
+
+    if (lpValueName)
+      std::cout << "lpValueName: " << wide_to_string(lpValueName).c_str() << std::endl;
 
     return (reinterpret_cast<regenumvaluew_t>(regenumvaluew_addr))
       (hKey, dwIndex, lpValueName, lpcchValueName, lpReserved, lpType, lpData, lpcbData);
@@ -72,11 +94,10 @@ namespace RegHooks
     LPCWSTR lpValueName
   )
   {
-    auto original = (reinterpret_cast<regdeletevaluew_t>(regdeletevaluew_addr))(hKey, lpValueName);
+    std::cout << "[RegDeleteValueW]" << std::endl;
+    std::cout << "lpValueName" << wide_to_string(lpValueName).c_str() << std::endl;
 
-    std::cout << "RegDeleteValueW(" << hKey << ", " << lpValueName << ");" << std::endl;
-
-    return original;
+    return (reinterpret_cast<regdeletevaluew_t>(regdeletevaluew_addr))(hKey, lpValueName);;
   }
 
   // hook for RegDeleteKeyW
@@ -90,9 +111,10 @@ namespace RegHooks
     LPCWSTR lpSubKey
   )
   {
-    auto original = (reinterpret_cast<regdeletekeyw_t>(regdeletekeyw_addr))(hKey, lpSubKey);
-    std::cout << "RegDeleteValueW(" << hKey << ", " << lpSubKey << ");" << std::endl;
-    return original;
+    std::cout << "[RegDeleteValueW]" << std::endl;
+    std::cout << "lpSubkey" << wide_to_string(lpSubKey).c_str() << std::endl;
+
+    return (reinterpret_cast<regdeletekeyw_t>(regdeletekeyw_addr))(hKey, lpSubKey);;
   }
 }
 
@@ -156,9 +178,16 @@ void thread_main()
 
   std::cout << "imports resolved\npreparing to hook" << std::endl;
 
+  // reg hooks
+  //
   DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
+
+  // activation hooks
+  // 
+  RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::enable_def_helper);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
