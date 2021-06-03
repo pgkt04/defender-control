@@ -22,6 +22,8 @@
 
 namespace RegHooks
 {
+  // typedefs
+  //
   using regenumvaluew_t = LSTATUS(*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
   uintptr_t regenumvaluew_addr;
 
