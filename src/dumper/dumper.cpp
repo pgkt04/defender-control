@@ -41,7 +41,8 @@ namespace RegHooks
     LPDWORD lpcbData
   )
   {
-    std::wcout << "RegEnumValueW" << std::endl;
+    std::wcout << "[RegEnumValueW]" << std::endl;
+    //std::wcout << "lpValueName: " << lpValueName << std::endl;
 
     return (reinterpret_cast<regenumvaluew_t>(regenumvaluew_addr))
       (hKey, dwIndex, lpValueName, lpcchValueName, lpReserved, lpType, lpData, lpcbData);
@@ -50,7 +51,7 @@ namespace RegHooks
   // hook for RegDeleteValueW
   // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regdeletevaluew
   // 
-  using regdeletevaluew_t = LSTATUS(*)(HKEY, LPCWSTR);
+  using regdeletevaluew_t = LSTATUS(__stdcall*)(HKEY, LPCWSTR);
   uintptr_t regdeletevaluew_addr;
 
   LSTATUS __stdcall hk_RegDeleteValueW(
@@ -68,7 +69,7 @@ namespace RegHooks
   // hook for RegDeleteKeyW
   // https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regdeletekeyw
   //  
-  using regdeletekeyw_t = LSTATUS(*)(HKEY, LPCWSTR);
+  using regdeletekeyw_t = LSTATUS(__stdcall*)(HKEY, LPCWSTR);
   uintptr_t regdeletekeyw_addr;
 
   LSTATUS __stdcall hk_RegDeleteKeyW(
@@ -86,27 +87,20 @@ namespace DetourHelper
 {
   // places a hook 
   //
-  void perf_hook(uintptr_t func, PVOID custom)
-  {
-    if (!func || !custom)
-      return;
-
+  void perf_hook(PVOID* oFunction, PVOID pDetour) {
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
-    DetourAttach(&(PVOID&)func, custom);
+    DetourAttach(oFunction, pDetour);
     DetourTransactionCommit();
   }
 
+
   // removes a hook
   //
-  void undo_hook(uintptr_t func, PVOID custom)
-  {
-    if (!func || !custom)
-      return;
-
+  void undo_hook(PVOID* oFunction, PVOID pDetour) {
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
-    DetourDetach(&(LPVOID&)func, custom);
+    DetourDetach(oFunction, pDetour);
     DetourTransactionCommit();
   }
 }
@@ -149,25 +143,9 @@ void thread_main()
 
   std::wcout << "imports resolved\npreparing to hook" << std::endl;
 
-  //DetourHelper::perf_hook(RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
-  //DetourHelper::perf_hook(RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
-  //DetourHelper::perf_hook(RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
-
-  //DetourTransactionBegin();
-  //DetourUpdateThread(GetCurrentThread());
-  //DetourAttach(&(PVOID&)RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
-  //DetourTransactionCommit();
-
-  //DetourTransactionBegin();
-  //DetourUpdateThread(GetCurrentThread());
-  //DetourAttach(&(PVOID&)RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
-  //DetourTransactionCommit();
-
-  DetourTransactionBegin();
-  DetourUpdateThread(GetCurrentThread());
-  DetourAttach(&(PVOID&)RegHooks::regenumvaluew_addr, &RegHooks::hk_RegEnumValueW);
-  DetourTransactionCommit();
-
+  DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
