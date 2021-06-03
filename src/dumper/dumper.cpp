@@ -3,7 +3,7 @@
 // TO-DO:
 // add 32 bit support + retargetting [done?]
 // import detours, will need to recompile 32 bit [done]
-// write hook functions [workign on it]
+// write hook functions [working on it]
 // inject and write findings
 // list of functions to hook:
 // all imported from ADVAPI32
@@ -70,7 +70,6 @@ namespace RegHooks
 
     return original;
   }
-
 
 }
 
