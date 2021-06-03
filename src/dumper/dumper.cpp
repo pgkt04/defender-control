@@ -59,6 +59,7 @@ namespace RegHooks
 
   // WM_COMMAND handler
   // base+05F48E
+  //
   using handle_command_t = char(__stdcall*)(int, UINT, UINT);
   uintptr_t handle_command_addr;
 
@@ -86,9 +87,7 @@ namespace RegHooks
   )
   {
     std::cout << "[RegEnumValueW]" << std::endl;
-
-    if (lpValueName)
-      std::cout << "lpValueName: " << wide_to_string(lpValueName).c_str() << std::endl;
+    std::cout << "lpValueName: " << wide_to_string(lpValueName).c_str() << std::endl;
 
     return (reinterpret_cast<regenumvaluew_t>(regenumvaluew_addr))
       (hKey, dwIndex, lpValueName, lpcchValueName, lpReserved, lpType, lpData, lpcbData);
@@ -125,8 +124,31 @@ namespace RegHooks
     std::cout << "[RegDeleteValueW]" << std::endl;
     std::cout << "lpSubkey" << wide_to_string(lpSubKey).c_str() << std::endl;
 
-    return (reinterpret_cast<regdeletekeyw_t>(regdeletekeyw_addr))(hKey, lpSubKey);;
+    return (reinterpret_cast<regdeletekeyw_t>(regdeletekeyw_addr))(hKey, lpSubKey);
   }
+
+  // RegSetValueExW
+  // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regsetvalueexw
+  //
+  using regsetkeyvalueexw_t = LSTATUS(__stdcall*)(HKEY, LPCWSTR, DWORD, DWORD, const BYTE*, DWORD);
+  uintptr_t regsetvalue_addr;
+
+  LSTATUS __stdcall hk_RegSetValueExW(
+    HKEY       hKey,
+    LPCWSTR    lpValueName,
+    DWORD      Reserved,
+    DWORD      dwType,
+    const BYTE* lpData,
+    DWORD      cbData
+  )
+  {
+    std::cout << "[RegSetValueExW]" << std::endl;
+    std::cout << "lpValueName: " << wide_to_string(lpValueName).c_str() << std::endl;
+    return (reinterpret_cast<regsetkeyvalueexw_t>(regsetvalue_addr))(hKey, lpValueName, Reserved, dwType, lpData, cbData);
+  }
+
+
+
 }
 
 namespace DetourHelper
@@ -195,14 +217,15 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
 
-  // activation hooks
+
+  // native hooks
   // pretty redunant dont need to enable them
   // 
   //RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
   //DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::enable_def_helper);
-
-  RegHooks::handle_command_addr = (uintptr_t)GetModuleHandleA(0) + 0x5F48E;
-  DetourHelper::perf_hook((PVOID*)&RegHooks::handle_command_addr, RegHooks::HandleCommand);
+  //
+  //RegHooks::handle_command_addr = (uintptr_t)GetModuleHandleA(0) + 0x5F48E;
+  //DetourHelper::perf_hook((PVOID*)&RegHooks::handle_command_addr, RegHooks::HandleCommand);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
