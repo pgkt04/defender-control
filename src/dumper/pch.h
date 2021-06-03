@@ -7,7 +7,11 @@
 #ifndef PCH_H
 #define PCH_H
 
-// add headers that you want to pre-compile here
-#include "framework.h"
+#include <iostream>
+#include <Windows.h>
+#include <Psapi.h>
+
+//#include <detours.h>
+//#pragma comment(lib, "detours.lib")
 
 #endif //PCH_H
