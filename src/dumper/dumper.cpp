@@ -25,6 +25,7 @@ namespace RegHooks
 	uint64_t reg_enum_valuew_addr;
 
 	// hook for RegEnumValueW
+	// ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regenumvaluew
 	//
 	LSTATUS hk_reg_enum_valuew(
 		HKEY    hKey,
