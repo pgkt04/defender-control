@@ -1,14 +1,14 @@
 // this is to poc for dumping out registry files as part 2 of the reversal
 //
 // TO-DO:
-// add 32 bit support + retargetting
-// import detours, will need to recompile 32 bit
-// write hook functions
+// add 32 bit support + retargetting [done?]
+// import detours, will need to recompile 32 bit [done]
+// write hook functions [workign on it]
 // inject and write findings
 // list of functions to hook:
 // all imported from ADVAPI32
 // RegEnumValueW [done]
-// RegDeleteValueW
+// RegDeleteValueW [done]
 // RegDeleteKeyW
 // RegSetValueExW
 // RegCreateKeyExW
@@ -17,20 +17,20 @@
 // RegCloseKey
 // RegQueryValueExW
 // RegOpenKeyExW
+// reformat printing if succesfully hooked.
 
 #include "pch.h"
 
 namespace RegHooks
 {
-  // typedefs
-  //
-  using regenumvaluew_t = LSTATUS(*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
-  uintptr_t regenumvaluew_addr;
-
   // hook for RegEnumValueW
   // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regenumvaluew
   //
-  LSTATUS hk_regenumvaluew(
+
+  using regenumvaluew_t = LSTATUS(*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
+  uintptr_t regenumvaluew_addr;
+
+  LSTATUS hk_RegEnumValueW(
     HKEY    hKey,
     DWORD   dwIndex,
     LPWSTR  lpValueName,
@@ -44,12 +44,33 @@ namespace RegHooks
     auto original = reinterpret_cast<regenumvaluew_t>(regenumvaluew_addr)
       (hKey, dwIndex, lpValueName, lpcchValueName, lpReserved, lpType, lpData, lpcbData);
 
-    std::cout << "hk_reg_enum_valuew(" << hKey << ", " << dwIndex << ", " << lpValueName << ", "
+    std::cout << "RegEnumValueW(" << hKey << ", " << dwIndex << ", " << lpValueName << ", "
       << ", " << lpcchValueName << ", " << lpReserved << ", " << lpType << ", " <<
       ", " << lpData << ", " << lpcbData << ");" << std::endl;
 
     return original;
   }
+
+  // hook for RegDeleteValueW
+  // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regdeletevaluew
+  // 
+
+  using regdeletevaluew_t = LSTATUS(*)(HKEY, LPCWSTR);
+  uintptr_t regdeletevaluew_addr;
+
+
+  LSTATUS hk_RegDeleteValueW(
+    HKEY    hKey,
+    LPCWSTR lpValueName
+  )
+  {
+    auto original = reinterpret_cast<regdeletevaluew_t>(regdeletevaluew_addr)(hKey, lpValueName);
+
+    std::cout << "RegDeleteValueW(" << hKey << ", " << lpValueName << ");" << std::endl;
+
+    return original;
+  }
+
 
 }
 
