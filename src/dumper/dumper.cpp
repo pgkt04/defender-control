@@ -6,7 +6,7 @@
 // inject and write findings
 // list of functions to hook:
 // all imported from ADVAPI32
-// RegEnumValueW
+// RegEnumValueW [done]
 // RegDeleteValueW
 // RegDeleteKeyW
 // RegSetValueExW
@@ -21,6 +21,9 @@
 
 namespace RegHooks
 {
+	using reg_enum_value_t = LSTATUS(*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
+	uint64_t reg_enum_valuew_addr;
+
 	// hook for RegEnumValueW
 	//
 	LSTATUS hk_reg_enum_valuew(
@@ -34,7 +37,14 @@ namespace RegHooks
 		LPDWORD lpcbData
 	)
 	{
+		auto original = reinterpret_cast<reg_enum_value_t>(reg_enum_valuew_addr)
+			(hKey, dwIndex, lpValueName, lpcchValueName, lpReserved, lpType, lpData, lpcbData);
 
+		std::cout << "hk_reg_enum_valuew(" << hKey << ", " << dwIndex << ", " << lpValueName << ", "
+			<< ", " << lpcchValueName << ", " << lpReserved << ", " << lpType << ", " <<
+			", " << lpData << ", " << lpcbData << ");" << std::endl;
+
+		return original;
 	}
 
 }
