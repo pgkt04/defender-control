@@ -1,24 +1,19 @@
 // this is to poc for dumping out registry files as part 2 of the reversal
 //
 // TO-DO:
-// add 32 bit support + retargetting [done?]
-// import detours, will need to recompile 32 bit [done]
-// write hook functions [working on it]
 // inject and write findings
-// list of functions to hook:
-// all imported from ADVAPI32
+// list of functions to hook from ADVAPI32
 // RegEnumValueW [done]
 // RegDeleteValueW [done]
 // RegDeleteKeyW [done]
-// RegSetValueExW [templated, need to add hook]
-// RegCreateKeyExW
-// RegConnectRegistryW
+// RegSetValueExW [templated]
+// RegCreateKeyExW [templated]
+// RegConnectRegistryW 
 // RegEnumKeyExW
 // RegCloseKey
 // RegQueryValueExW
 // RegOpenKeyExW
-// reformat printing if succesfully hooked.
-// implement wstring
+// reformat printing if succesfully hooked
 
 #include "pch.h"
 
@@ -185,7 +180,6 @@ namespace DetourHelper
     DetourAttach(oFunction, pDetour);
     DetourTransactionCommit();
   }
-
 
   // removes a hook
   //
