@@ -10,7 +10,7 @@
 // RegEnumValueW [done]
 // RegDeleteValueW [done]
 // RegDeleteKeyW [done]
-// RegSetValueExW
+// RegSetValueExW [templated, need to add hook]
 // RegCreateKeyExW
 // RegConnectRegistryW
 // RegEnumKeyExW
@@ -147,8 +147,32 @@ namespace RegHooks
     return (reinterpret_cast<regsetkeyvalueexw_t>(regsetvalue_addr))(hKey, lpValueName, Reserved, dwType, lpData, cbData);
   }
 
+  // RegCreateKeyExW
+  // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regcreatekeyexw
+  //
+  using RegCreateKeyExW_t = LSTATUS(__stdcall*)(HKEY, LPCWSTR, DWORD, LPWSTR, DWORD, REGSAM, const LPSECURITY_ATTRIBUTES,
+    PHKEY, LPDWORD);
+  uintptr_t RegCreateKeyExW_addr;
 
+  LSTATUS hk_RegCreateKeyExW(
+    HKEY                        hKey,
+    LPCWSTR                     lpSubKey,
+    DWORD                       Reserved,
+    LPWSTR                      lpClass,
+    DWORD                       dwOptions,
+    REGSAM                      samDesired,
+    const LPSECURITY_ATTRIBUTES lpSecurityAttributes,
+    PHKEY                       phkResult,
+    LPDWORD                     lpdwDisposition
+  )
+  {
+    std::cout << "[RegCreateKeyExW]" << std::endl;
+    std::cout << "lpSubKey: " << wide_to_string(lpSubKey).c_str() << std::endl;
+    std::cout << "lpClass: " << wide_to_string(lpClass).c_str() << std::endl;
 
+    return (reinterpret_cast<RegCreateKeyExW_t>(regsetvalue_addr))
+      (hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition);
+  }
 }
 
 namespace DetourHelper
