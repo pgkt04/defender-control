@@ -9,7 +9,7 @@
 // all imported from ADVAPI32
 // RegEnumValueW [done]
 // RegDeleteValueW [done]
-// RegDeleteKeyW
+// RegDeleteKeyW [done]
 // RegSetValueExW
 // RegCreateKeyExW
 // RegConnectRegistryW
@@ -18,6 +18,7 @@
 // RegQueryValueExW
 // RegOpenKeyExW
 // reformat printing if succesfully hooked.
+// use wide cout format [done]
 
 #include "pch.h"
 
@@ -26,28 +27,24 @@ namespace RegHooks
   // hook for RegEnumValueW
   // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regenumvaluew
   //
-  using regenumvaluew_t = LSTATUS(*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
+  using regenumvaluew_t = LSTATUS(__stdcall*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
   uintptr_t regenumvaluew_addr;
 
-  LSTATUS hk_RegEnumValueW(
-    HKEY    hKey,
-    DWORD   dwIndex,
-    LPWSTR  lpValueName,
+  LSTATUS __stdcall hk_RegEnumValueW(
+    HKEY hKey,
+    DWORD dwIndex,
+    LPWSTR lpValueName,
     LPDWORD lpcchValueName,
     LPDWORD lpReserved,
     LPDWORD lpType,
-    LPBYTE  lpData,
+    LPBYTE lpData,
     LPDWORD lpcbData
   )
   {
-    auto original = reinterpret_cast<regenumvaluew_t>(regenumvaluew_addr)
+    std::wcout << "RegEnumValueW" << std::endl;
+
+    return (reinterpret_cast<regenumvaluew_t>(regenumvaluew_addr))
       (hKey, dwIndex, lpValueName, lpcchValueName, lpReserved, lpType, lpData, lpcbData);
-
-    std::cout << "RegEnumValueW(" << hKey << ", " << dwIndex << ", " << lpValueName << ", "
-      << ", " << lpcchValueName << ", " << lpReserved << ", " << lpType << ", " <<
-      ", " << lpData << ", " << lpcbData << ");" << std::endl;
-
-    return original;
   }
 
   // hook for RegDeleteValueW
@@ -56,30 +53,31 @@ namespace RegHooks
   using regdeletevaluew_t = LSTATUS(*)(HKEY, LPCWSTR);
   uintptr_t regdeletevaluew_addr;
 
-
-  LSTATUS hk_RegDeleteValueW(
+  LSTATUS __stdcall hk_RegDeleteValueW(
     HKEY    hKey,
     LPCWSTR lpValueName
   )
   {
-    auto original = reinterpret_cast<regdeletevaluew_t>(regdeletevaluew_addr)(hKey, lpValueName);
-    std::cout << "RegDeleteValueW(" << hKey << ", " << lpValueName << ");" << std::endl;
+    auto original = (reinterpret_cast<regdeletevaluew_t>(regdeletevaluew_addr))(hKey, lpValueName);
+
+    std::wcout << "RegDeleteValueW(" << hKey << ", " << lpValueName << ");" << std::endl;
+
     return original;
   }
 
   // hook for RegDeleteKeyW
   // https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regdeletekeyw
-  //
+  //  
   using regdeletekeyw_t = LSTATUS(*)(HKEY, LPCWSTR);
   uintptr_t regdeletekeyw_addr;
 
-  LSTATUS hk_RegDeleteKeyW(
+  LSTATUS __stdcall hk_RegDeleteKeyW(
     HKEY    hKey,
     LPCWSTR lpSubKey
   )
   {
-    auto original = reinterpret_cast<regdeletekeyw_t>(regdeletekeyw_addr)(hKey, lpSubKey);
-    std::cout << "RegDeleteValueW(" << hKey << ", " << lpSubKey << ");" << std::endl;
+    auto original = (reinterpret_cast<regdeletekeyw_t>(regdeletekeyw_addr))(hKey, lpSubKey);
+    std::wcout << "RegDeleteValueW(" << hKey << ", " << lpSubKey << ");" << std::endl;
     return original;
   }
 }
@@ -90,6 +88,9 @@ namespace DetourHelper
   //
   void perf_hook(uintptr_t func, PVOID custom)
   {
+    if (!func || !custom)
+      return;
+
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
     DetourAttach(&(PVOID&)func, custom);
@@ -100,6 +101,9 @@ namespace DetourHelper
   //
   void undo_hook(uintptr_t func, PVOID custom)
   {
+    if (!func || !custom)
+      return;
+
     DetourTransactionBegin();
     DetourUpdateThread(GetCurrentThread());
     DetourDetach(&(LPVOID&)func, custom);
@@ -112,7 +116,9 @@ uintptr_t get_func_addr(HMODULE mod, const char* name)
   auto ret = reinterpret_cast<uintptr_t>(GetProcAddress(mod, name));
 
   if (!ret)
-    std::cout << "failed to get " << name << std::endl;
+    std::wcout << "failed to get " << name << std::endl;
+
+  std::wcout << "obtained " << name << " from " << mod << std::endl;
 
   return ret;
 }
@@ -131,13 +137,37 @@ void thread_main()
   //
   auto advapi32 = GetModuleHandleA("Advapi32.dll");
 
+  if (!advapi32)
+  {
+    std::wcout << "advapi32.dll not found" << std::endl;
+    return;
+  }
+
   RegHooks::regdeletekeyw_addr = get_func_addr(advapi32, "RegDeleteKeyW");
   RegHooks::regdeletevaluew_addr = get_func_addr(advapi32, "RegDeleteValueW");
   RegHooks::regenumvaluew_addr = get_func_addr(advapi32, "RegEnumValueW");
 
-  DetourHelper::perf_hook(RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
-  DetourHelper::perf_hook(RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
-  DetourHelper::perf_hook(RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
+  std::wcout << "imports resolved\npreparing to hook" << std::endl;
+
+  //DetourHelper::perf_hook(RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
+  //DetourHelper::perf_hook(RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
+  //DetourHelper::perf_hook(RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
+
+  //DetourTransactionBegin();
+  //DetourUpdateThread(GetCurrentThread());
+  //DetourAttach(&(PVOID&)RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
+  //DetourTransactionCommit();
+
+  //DetourTransactionBegin();
+  //DetourUpdateThread(GetCurrentThread());
+  //DetourAttach(&(PVOID&)RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
+  //DetourTransactionCommit();
+
+  DetourTransactionBegin();
+  DetourUpdateThread(GetCurrentThread());
+  DetourAttach(&(PVOID&)RegHooks::regenumvaluew_addr, &RegHooks::hk_RegEnumValueW);
+  DetourTransactionCommit();
+
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
