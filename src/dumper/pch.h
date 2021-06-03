@@ -11,7 +11,7 @@
 #include <Windows.h>
 #include <Psapi.h>
 
-//#include <detours.h>
-//#pragma comment(lib, "detours.lib")
+#include <detours.h>
+#pragma comment(lib, "detours.lib")
 
 #endif //PCH_H
