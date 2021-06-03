@@ -5,8 +5,17 @@
 // write hook functions
 // inject and write findings
 // list of functions to hook:
-// 
-
+// all imported from ADVAPI32
+// RegEnumValueW
+// RegDeleteValueW
+// RegDeleteKeyW
+// RegSetValueExW
+// RegCreateKeyExW
+// RegConnectRegistryW
+// RegEnumKeyExW
+// RegCloseKey
+// RegQueryValueExW
+// RegOpenKeyExW
 
 #include "pch.h"
 
