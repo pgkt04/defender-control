@@ -44,6 +44,7 @@ namespace RegHooks
   // we can try a thiscall variant or cdecltype
   // https://www.unknowncheats.me/forum/849605-post6.html
   // int __thiscall enable_def_helper(int *this, int a2, _DWORD *a3)
+  // pattern: 55 8B EC 83 E4 F8 83 EC 64 53 56 8B 75 08 8B 46 08 8B D9 57 8D 4C 24 50 89 44 24 20 C7 44 24
   //
   using enable_def_helper_t = int(__thiscall*)(void*, int, DWORD*);
   uintptr_t enable_def_help_addr;
@@ -53,7 +54,6 @@ namespace RegHooks
     std::cout << "activation routine" << std::endl;
     auto v37 = *(DWORD*)(a2 + 8);
     std::cout << "v37: " << v37 << std::endl;
-
     return (reinterpret_cast<enable_def_helper_t>(enable_def_help_addr))(pThis, a2, a3);
   }
 
@@ -185,6 +185,7 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
 
   // activation hooks
+  // pretty redunant dont need to enable them
   // 
   RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
   DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::enable_def_helper);
