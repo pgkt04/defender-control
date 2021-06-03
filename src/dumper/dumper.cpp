@@ -1,7 +1,8 @@
 // this is to poc for dumping out registry files as part 2 of the reversal
 //
 // TO-DO:
-// import detours, will need to recompile 32 bit	
+// add 32 bit support + retargetting
+// import detours, will need to recompile 32 bit
 // write hook functions
 // inject and write findings
 // list of functions to hook:
@@ -21,13 +22,13 @@
 
 namespace RegHooks
 {
-	using reg_enum_value_t = LSTATUS(*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
-	uint64_t reg_enum_valuew_addr;
+	using regenumvaluew_t = LSTATUS(*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
+	uintptr_t regenumvaluew_addr;
 
 	// hook for RegEnumValueW
 	// ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regenumvaluew
 	//
-	LSTATUS hk_reg_enum_valuew(
+	LSTATUS hk_regenumvaluew(
 		HKEY    hKey,
 		DWORD   dwIndex,
 		LPWSTR  lpValueName,
@@ -38,7 +39,7 @@ namespace RegHooks
 		LPDWORD lpcbData
 	)
 	{
-		auto original = reinterpret_cast<reg_enum_value_t>(reg_enum_valuew_addr)
+		auto original = reinterpret_cast<regenumvaluew_t>(regenumvaluew_addr)
 			(hKey, dwIndex, lpValueName, lpcchValueName, lpReserved, lpType, lpData, lpcbData);
 
 		std::cout << "hk_reg_enum_valuew(" << hKey << ", " << dwIndex << ", " << lpValueName << ", "
