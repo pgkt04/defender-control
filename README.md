@@ -1,5 +1,5 @@
 # defender-control
-Open sourced windows defender manager
+An open-source windows defender manager
 
 ## what is this project?  
 we all know that disabling windefender is a pain going through countless registries.  
