@@ -26,7 +26,6 @@ namespace RegHooks
   // hook for RegEnumValueW
   // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regenumvaluew
   //
-
   using regenumvaluew_t = LSTATUS(*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
   uintptr_t regenumvaluew_addr;
 
@@ -54,7 +53,6 @@ namespace RegHooks
   // hook for RegDeleteValueW
   // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regdeletevaluew
   // 
-
   using regdeletevaluew_t = LSTATUS(*)(HKEY, LPCWSTR);
   uintptr_t regdeletevaluew_addr;
 
@@ -65,54 +63,59 @@ namespace RegHooks
   )
   {
     auto original = reinterpret_cast<regdeletevaluew_t>(regdeletevaluew_addr)(hKey, lpValueName);
-
     std::cout << "RegDeleteValueW(" << hKey << ", " << lpValueName << ");" << std::endl;
-
     return original;
   }
 
-}
+  // hook for RegDeleteKeyW
+  // https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regdeletekeyw
+  //
+  using regdeletekeyw_t = LSTATUS(*)(HKEY, LPCWSTR);
+  uintptr_t regdeletekeyw_addr;
 
-namespace DetourExample
-{
-  using LoadStr_t = int(*)(HINSTANCE, UINT, LPSTR, int);
-  uint64_t loadstr_addr;
-
-  int __stdcall hk_loadstr(HINSTANCE hInstance, UINT uID, LPSTR lpBuffer, int cchBufferMax)
+  LSTATUS hk_RegDeleteKeyW(
+    HKEY    hKey,
+    LPCWSTR lpSubKey
+  )
   {
-    auto original = ((LoadStr_t)(loadstr_addr))(hInstance, uID, lpBuffer, cchBufferMax);
+    auto original = reinterpret_cast<regdeletekeyw_t>(regdeletekeyw_addr)(hKey, lpSubKey);
+    std::cout << "RegDeleteValueW(" << hKey << ", " << lpSubKey << ");" << std::endl;
     return original;
-  }
-
-  // only to serve as a temp example, do not call
-  void example_hook()
-  {
-    // perform hooking
-    loadstr_addr = (uint64_t)GetProcAddress(GetModuleHandleA("User32.dll"), "LoadStringA");
-    DetourTransactionBegin();
-    DetourUpdateThread(GetCurrentThread());
-    DetourAttach(&(PVOID&)loadstr_addr, hk_loadstr);
-    DetourTransactionCommit();
   }
 }
 
 namespace DetourHelper
 {
   // places a hook 
-  void perf_hook()
+  //
+  void perf_hook(uintptr_t func, PVOID custom)
   {
-    // example code from last ctf
-    // will add code base for x64 and x32 support, as well as setup empty 
-    // project to do this stuff quicky?
+    DetourTransactionBegin();
+    DetourUpdateThread(GetCurrentThread());
+    DetourAttach(&(PVOID&)func, custom);
+    DetourTransactionCommit();
   }
 
   // removes a hook
-  void undo_hook()
+  //
+  void undo_hook(uintptr_t func, PVOID custom)
   {
-
+    DetourTransactionBegin();
+    DetourUpdateThread(GetCurrentThread());
+    DetourDetach(&(LPVOID&)func, custom);
+    DetourTransactionCommit();
   }
 }
 
+uintptr_t get_func_addr(HMODULE mod, const char* name)
+{
+  auto ret = reinterpret_cast<uintptr_t>(GetProcAddress(mod, name));
+
+  if (!ret)
+    std::cout << "failed to get " << name << std::endl;
+
+  return ret;
+}
 
 void thread_main()
 {
@@ -124,6 +127,17 @@ void thread_main()
   freopen("CONOUT$", "w", stderr);
   SetConsoleTitleA("Log");
 
+  // setup hooks
+  //
+  auto advapi32 = GetModuleHandleA("Advapi32.dll");
+
+  RegHooks::regdeletekeyw_addr = get_func_addr(advapi32, "RegDeleteKeyW");
+  RegHooks::regdeletevaluew_addr = get_func_addr(advapi32, "RegDeleteValueW");
+  RegHooks::regenumvaluew_addr = get_func_addr(advapi32, "RegEnumValueW");
+
+  DetourHelper::perf_hook(RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
+  DetourHelper::perf_hook(RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
+  DetourHelper::perf_hook(RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
