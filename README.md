@@ -129,7 +129,6 @@ lpValueName: SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
 [RegQueryValueExW]
 lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
 
-
 Routine to disable defender
 
 [RegCreateKeyExW]
@@ -178,7 +177,6 @@ lpValueName: SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
 lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
 
 Routine to enable defender
-
 
 [RegOpenKeyExW]
 lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
