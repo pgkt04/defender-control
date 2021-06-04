@@ -18,7 +18,8 @@ The first one, is to hook the registry functions and output their arguments. Sin
 for a fact after looking at the imports - this program works by writing into relevant registries.  
 
 The second method is to breakpoint each function with x64 debugger and take a look at the strings on runtime.  
-
+  
+I did eventually come up with a third method, and it was to let procmon do its thing while you debug the program - but ill leave that as an exercise for another day.
 
 ## disabling defender
 
@@ -284,7 +285,17 @@ lpValueName: SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
 lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
 <also redacted a bunch of stuff from policy manager stuff>
 ```
-
+  
+So by analyzing these logs, it seems that we check if defender is enabled by reading these two registries:
+```
+SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+DisableRealtimeMonitoring
+```
+  
+When it disables the AV it modifies these registries:
+```
+```
+  
 
 ## tldr
 
