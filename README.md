@@ -134,15 +134,12 @@ Routine to disable defender
 
 [RegCreateKeyExW]
 lpSubKey: SOFTWARE\Policies\Microsoft\Windows Defender
-lpClass:
 [RegSetValueExW]
 lpValueName: DisableAntiSpyware
 [RegCreateKeyExW]
 lpSubKey: SOFTWARE\Microsoft\Windows Defender
-lpClass:
 [RegCreateKeyExW]
 lpSubKey: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
-lpClass:
 [RegOpenKeyExW]
 lpValueName: SOFTWARE\Microsoft\Windows Defender
 [RegQueryValueExW]
@@ -151,7 +148,6 @@ lpValueName: DisableAntiSpyware
 lpValueName: DisableAntiSpyware
 [RegCreateKeyExW]
 lpSubKey: SYSTEM\CurrentControlSet\Services\WinDefend
-lpClass:
 [RegSetValueExW]
 lpValueName: Start
 [RegOpenKeyExW]
@@ -164,7 +160,6 @@ lpValueName: SecurityHealth
 lpValueName: SecurityHealth
 [RegCreateKeyExW]
 lpSubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run
-lpClass:
 [RegSetValueExW]
 lpValueName: SecurityHealth
 [RegOpenKeyExW]
