@@ -343,9 +343,7 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::regsetvalue_addr, RegHooks::hk_RegSetValueExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegCreateKeyExW_addr, RegHooks::hk_RegCreateKeyExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegConnectRegistryW_addr, RegHooks::hk_RegConnectRegistryW);
-
-  DetourHelper::perf_hook((PVOID*)&RegHooks::RegEnumKeyExW_addr, RegHooks::hk_RegEnumKeyExW); // figure crash here\
- 
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegEnumKeyExW_addr, RegHooks::hk_RegEnumKeyExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegQueryValueExW_addr, RegHooks::hk_RegQueryValueExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegOpenKeyExW_addr, RegHooks::hk_RegOpenKeyExW);
 
