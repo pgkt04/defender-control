@@ -9,12 +9,9 @@
 //
 int main()
 {
-  if (DCONTROL::check_defender()) {
-    printf("Windows defender is ACTIVE\n");
-  }
-  else {
-    printf("Windows defender is OFF\n");
-  }
+  printf(DCONTROL::check_defender() ?
+    "Windows defender is ACTIVE\n" :
+    "Windows defender is OFF\n");
 
   system("pause");
 

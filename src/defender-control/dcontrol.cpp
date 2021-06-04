@@ -2,24 +2,18 @@
 
 namespace DCONTROL
 {
-  // forget about this for now
-  //
-  bool enable_control()
-  {
-    return true;
-  }
-
-  // write a working poc
+  // disables window defender
   //
   bool disable_control()
   {
-
+    // add DisableRealtimeMonitoring if it does not exist
+    // set to 1 if it already exists
     return true;
   }
 
   // Checks whether Real-Time Protection is activated on windows
   //
-  bool check_defender()
+  bool check_defender(uint32_t flags)
   {
     LSTATUS status;
     HKEY hkey;
@@ -43,7 +37,9 @@ namespace DCONTROL
     //
     if (status)
     {
-      std::cout << "Error opening Real-Time Protection key" << std::endl;
+      if (flags & DBG_MSG)
+        std::cout << "Error opening Real-Time Protection key" << std::endl;
+
       return true;
     }
 
@@ -57,7 +53,9 @@ namespace DCONTROL
 
     if (status)
     {
-      std::cout << "Failed to read DisableRealtimeMonitoring" << std::endl;
+      if (flags & DBG_MSG)
+        std::cout << "Failed to read DisableRealtimeMonitoring" << std::endl;
+
       return true;
     }
 
