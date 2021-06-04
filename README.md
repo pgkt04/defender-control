@@ -21,9 +21,9 @@ The second method is to breakpoint each function with x64 debugger and take a lo
   
 I did eventually come up with a third method, and it was to let procmon do its thing while you debug the program - but ill leave that as an exercise for another day.
 
-## disabling defender
-
 ## x64 Debug 
+
+### disabling defender
 
 If we breakpoint onto RegSetKeyValue it writes into "DisableAntiSpyware" which we can research on the internet  
 There is a lot of occurance with the following registry directory: "Software\\Policies\\Microsoft\\Windows Defender"  
