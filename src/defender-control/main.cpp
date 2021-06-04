@@ -5,17 +5,15 @@
 // create cli program
 // maybe make a ui for this
 
-
-
 // entrypoint
 //
 int main()
 {
-  if (DCONTROL::is_av_running()) {
-    printf("running...\n");
+  if (DCONTROL::check_defender()) {
+    printf("Windows defender is ACTIVE\n");
   }
   else {
-    printf("not running...\n");
+    printf("Windows defender is OFF\n");
   }
 
   system("pause");

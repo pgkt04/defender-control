@@ -5,5 +5,5 @@
 
 namespace DCONTROL
 {
-  bool is_av_running();
+  bool check_defender();
 }
