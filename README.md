@@ -1,6 +1,4 @@
 # defender-control
-An open-source windows defender manager
-
 ## what is this project?  
 we all know that disabling windefender is a pain going through countless registries.  
 the next easiest solution is to use freeware and currently the most popular one is by sordum. (i won't link here - you can find it on the first google result)
@@ -99,3 +97,95 @@ there seems to be a reference with "Policy Manager" using RegEnumKeyExW
 
 It seems to call RegDeleteValueW on security health (see above)  
 
+
+## poc 2: hooks
+We are going to write a simple dll to inject into defender control to dump out the parameters of the functions we are interested in.  
+
+Here are the logs:
+```
+obtained RegDeleteKeyW from 75A60000
+obtained RegDeleteValueW from 75A60000
+obtained RegEnumValueW from 75A60000
+obtained RegSetValueExW from 75A60000
+obtained RegCreateKeyExW from 75A60000
+obtained RegConnectRegistryW from 75A60000
+obtained RegEnumKeyExW from 75A60000
+obtained RegQueryValueExW from 75A60000
+obtained RegOpenKeyExW from 75A60000
+imports resolved
+preparing to hook
+
+Registry Routine to check if defender activated:
+
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
+[RegQueryValueExW]
+lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
+
+
+Routine to disable defender
+
+[RegCreateKeyExW]
+lpSubKey: SOFTWARE\Policies\Microsoft\Windows Defender
+lpClass:
+[RegSetValueExW]
+lpValueName: DisableAntiSpyware
+[RegCreateKeyExW]
+lpSubKey: SOFTWARE\Microsoft\Windows Defender
+lpClass:
+[RegCreateKeyExW]
+lpSubKey: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+lpClass:
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegCreateKeyExW]
+lpSubKey: SYSTEM\CurrentControlSet\Services\WinDefend
+lpClass:
+[RegSetValueExW]
+lpValueName: Start
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegQueryValueExW]
+lpValueName: SecurityHealth
+[RegQueryValueExW]
+lpValueName: SecurityHealth
+[RegCreateKeyExW]
+lpSubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run
+lpClass:
+[RegSetValueExW]
+lpValueName: SecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegEnumValueW]
+lpValueName: SecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
+[RegQueryValueExW]
+lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
+
+Routine to enable defender
+...
+```
+
+
+## tldr
+
+to disable windows defender we need to edit the following registries:  
