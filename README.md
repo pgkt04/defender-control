@@ -287,9 +287,38 @@ DisableRealtimeMonitoring
   
 When it disables the AV it modifies these registries:
 ```
+[RegCreateKeyExW]
+lpSubKey: SOFTWARE\Policies\Microsoft\Windows Defender
+[RegSetValueExW]
+lpValueName: DisableAntiSpyware
+[RegCreateKeyExW]
+lpSubKey: SOFTWARE\Microsoft\Windows Defender
+[RegCreateKeyExW]
+lpSubKey: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegCreateKeyExW]
+lpSubKey: SYSTEM\CurrentControlSet\Services\WinDefend
+[RegSetValueExW]
+lpValueName: Start
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegQueryValueExW]
+lpValueName: SecurityHealth
+[RegCreateKeyExW]
+lpSubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run
+[RegSetValueExW]
+lpValueName: SecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegEnumValueW]
+lpValueName: SecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
 ```
-  
 
+To enable the AV, we just do the opposite of what we needed to disable the AV.
+  
 ## tldr
 
 to disable windows defender we need to edit the following registries:  
