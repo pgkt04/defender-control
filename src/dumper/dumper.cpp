@@ -12,8 +12,8 @@
 // RegEnumKeyExW [done]
 // RegCloseKey [not hooked since redundant]
 // RegQueryValueExW [done]
-// RegOpenKeyExW
-// reformat printing if succesfully hooked
+// RegOpenKeyExW [done]
+// reformat printing
 
 #include "pch.h"
 
