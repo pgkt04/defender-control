@@ -282,7 +282,7 @@ lpValueName: DisableRealtimeMonitoring
 lpValueName: SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
 [RegQueryValueExW]
 lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
-
+<also redacted a bunch of stuff from policy manager stuff>
 ```
 
 

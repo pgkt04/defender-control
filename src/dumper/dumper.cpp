@@ -10,8 +10,8 @@
 // RegCreateKeyExW [done]
 // RegConnectRegistryW [done]
 // RegEnumKeyExW [done]
-// RegCloseKey
-// RegQueryValueExW
+// RegCloseKey [not hooked since redundant]
+// RegQueryValueExW [done]
 // RegOpenKeyExW
 // reformat printing if succesfully hooked
 
@@ -54,6 +54,8 @@ namespace RegHooks
 
   // WM_COMMAND handler
   // base+05F48E
+  // can be found by tracing the main function and looking for WM_COMMAND (0x0111)
+  // however this function doesn't seem to be called on runtime
   //
   using handle_command_t = char(__stdcall*)(int, UINT, UINT);
   uintptr_t handle_command_addr;
@@ -170,7 +172,6 @@ namespace RegHooks
   {
     std::cout << "[RegCreateKeyExW]" << std::endl;
     std::cout << "lpSubKey: " << wide_to_string(lpSubKey).c_str() << std::endl;
-    std::cout << "lpClass: " << wide_to_string(lpClass).c_str() << std::endl;
 
     return (reinterpret_cast<RegCreateKeyExW_t>(RegCreateKeyExW_addr))
       (hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition);
@@ -194,7 +195,7 @@ namespace RegHooks
   }
 
   // RegEnumKeyExW
-  // ms docs:
+  // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regenumkeyexw
   //
   using RegEnumKeyExW_t = LSTATUS(__stdcall*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPWSTR, LPDWORD, PFILETIME);
   uintptr_t RegEnumKeyExW_addr;
@@ -212,9 +213,63 @@ namespace RegHooks
   {
     std::cout << "[RegEnumKeyExW]" << std::endl;
     std::cout << "lpName: " << wide_to_string(lpName).c_str() << std::endl;
-    std::cout << "lpClass: " << wide_to_string(lpClass).c_str() << std::endl;
+
     return (reinterpret_cast<RegEnumKeyExW_t>(RegEnumKeyExW_addr))
       (hKey, dwIndex, lpName, lpcchName, lpReserved, lpClass, lpcchClass, lpftLastWriteTime);
+  }
+
+  // RegCloseKey
+  // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regclosekey
+  // seems redundant to hook
+  //
+  LSTATUS __stdcall hk_RegCloseKey(
+    HKEY hKey
+  )
+  {
+    return EXIT_SUCCESS;
+  }
+
+  // RegQueryValueExW 
+  // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regqueryvalueexw
+  //
+  using RegQueryValueExW_t = LSTATUS(__stdcall*)(HKEY, LPCWSTR, LPDWORD, LPDWORD, LPBYTE, LPDWORD);
+  uintptr_t RegQueryValueExW_addr;
+
+  LSTATUS __stdcall hk_RegQueryValueExW(
+    HKEY    hKey,
+    LPCWSTR lpValueName,
+    LPDWORD lpReserved,
+    LPDWORD lpType,
+    LPBYTE  lpData,
+    LPDWORD lpcbData
+  )
+  {
+    std::cout << "[RegQueryValueExW]" << std::endl;
+    std::cout << "lpValueName: " << wide_to_string(lpValueName).c_str() << std::endl;
+
+    return (reinterpret_cast<RegQueryValueExW_t>(RegQueryValueExW_addr))
+      (hKey, lpValueName, lpReserved, lpType, lpData, lpcbData);
+  }
+
+  // RegOpenKeyExW
+  // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regopenkeyexw
+  //
+  using RegOpenKeyExW_t = LSTATUS(__stdcall*)(HKEY, LPCWSTR, DWORD, REGSAM, PHKEY);
+  uintptr_t RegOpenKeyExW_addr;
+
+  LSTATUS __stdcall hk_RegOpenKeyExW(
+    HKEY    hKey,
+    LPCWSTR lpSubKey,
+    DWORD   ulOptions,
+    REGSAM  samDesired,
+    PHKEY   phkResult
+  )
+  {
+    std::cout << "[RegOpenKeyExW]" << std::endl;
+    std::cout << "lpValueName: " << wide_to_string(lpSubKey).c_str() << std::endl;
+
+    return (reinterpret_cast<RegOpenKeyExW_t>(RegOpenKeyExW_addr))
+      (hKey, lpSubKey, ulOptions, samDesired, phkResult);
   }
 }
 
@@ -275,6 +330,8 @@ void thread_main()
   RegHooks::RegCreateKeyExW_addr = get_func_addr(advapi32, "RegCreateKeyExW");
   RegHooks::RegConnectRegistryW_addr = get_func_addr(advapi32, "RegConnectRegistryW");
   RegHooks::RegEnumKeyExW_addr = get_func_addr(advapi32, "RegEnumKeyExW");
+  RegHooks::RegQueryValueExW_addr = get_func_addr(advapi32, "RegQueryValueExW");
+  RegHooks::RegOpenKeyExW_addr = get_func_addr(advapi32, "RegOpenKeyExW");
 
   std::cout << "imports resolved\npreparing to hook" << std::endl;
 
@@ -286,8 +343,11 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::regsetvalue_addr, RegHooks::hk_RegSetValueExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegCreateKeyExW_addr, RegHooks::hk_RegCreateKeyExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegConnectRegistryW_addr, RegHooks::hk_RegConnectRegistryW);
-  DetourHelper::perf_hook((PVOID*)&RegHooks::RegEnumKeyExW_addr, RegHooks::hk_RegEnumKeyExW);
 
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegEnumKeyExW_addr, RegHooks::hk_RegEnumKeyExW); // figure crash here\
+ 
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegQueryValueExW_addr, RegHooks::hk_RegQueryValueExW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegOpenKeyExW_addr, RegHooks::hk_RegOpenKeyExW);
 
   // native hooks
   // pretty redunant dont need to enable them
