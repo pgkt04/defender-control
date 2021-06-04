@@ -9,7 +9,7 @@
 // RegSetValueExW [done]
 // RegCreateKeyExW [done]
 // RegConnectRegistryW [done]
-// RegEnumKeyExW
+// RegEnumKeyExW [done]
 // RegCloseKey
 // RegQueryValueExW
 // RegOpenKeyExW
@@ -192,6 +192,30 @@ namespace RegHooks
     std::cout << "MachineName: " << wide_to_string(lpMachineName).c_str() << std::endl;
     return (reinterpret_cast<RegConnectRegistryW_t>(RegConnectRegistryW_addr))(lpMachineName, hKey, phkResult);
   }
+
+  // RegEnumKeyExW
+  // ms docs:
+  //
+  using RegEnumKeyExW_t = LSTATUS(__stdcall*)(HKEY, DWORD, LPWSTR, LPDWORD, LPDWORD, LPWSTR, LPDWORD, PFILETIME);
+  uintptr_t RegEnumKeyExW_addr;
+
+  LSTATUS __stdcall hk_RegEnumKeyExW(
+    HKEY      hKey,
+    DWORD     dwIndex,
+    LPWSTR    lpName,
+    LPDWORD   lpcchName,
+    LPDWORD   lpReserved,
+    LPWSTR    lpClass,
+    LPDWORD   lpcchClass,
+    PFILETIME lpftLastWriteTime
+  )
+  {
+    std::cout << "[RegEnumKeyExW]" << std::endl;
+    std::cout << "lpName: " << wide_to_string(lpName).c_str() << std::endl;
+    std::cout << "lpClass: " << wide_to_string(lpClass).c_str() << std::endl;
+    return (reinterpret_cast<RegEnumKeyExW_t>(RegEnumKeyExW_addr))
+      (hKey, dwIndex, lpName, lpcchName, lpReserved, lpClass, lpcchClass, lpftLastWriteTime);
+  }
 }
 
 namespace DetourHelper
@@ -250,6 +274,7 @@ void thread_main()
   RegHooks::regsetvalue_addr = get_func_addr(advapi32, "RegSetValueExW");
   RegHooks::RegCreateKeyExW_addr = get_func_addr(advapi32, "RegCreateKeyExW");
   RegHooks::RegConnectRegistryW_addr = get_func_addr(advapi32, "RegConnectRegistryW");
+  RegHooks::RegEnumKeyExW_addr = get_func_addr(advapi32, "RegEnumKeyExW");
 
   std::cout << "imports resolved\npreparing to hook" << std::endl;
 
@@ -261,6 +286,7 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::regsetvalue_addr, RegHooks::hk_RegSetValueExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegCreateKeyExW_addr, RegHooks::hk_RegCreateKeyExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegConnectRegistryW_addr, RegHooks::hk_RegConnectRegistryW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegEnumKeyExW_addr, RegHooks::hk_RegEnumKeyExW);
 
 
   // native hooks
