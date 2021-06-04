@@ -172,6 +172,19 @@ namespace RegHooks
   // RegConnectRegistryW
   // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/winreg/nf-winreg-regconnectregistryw
   //
+  using RegConnectRegistryW_t = LSTATUS(__stdcall*)(LPCWSTR, HKEY, PHKEY);
+  uintptr_t RegConnectRegistryW_addr;
+
+  LSTATUS __stdcall hk_RegConnectRegistryW(
+    LPCWSTR lpMachineName,
+    HKEY    hKey,
+    PHKEY   phkResult
+  )
+  {
+    std::cout << "[RegConnectRegistryW]" << std::endl;
+    std::cout << "MachineName: " << wide_to_string(lpMachineName).c_str() << std::endl;
+    return (reinterpret_cast<RegConnectRegistryW_t>(RegConnectRegistryW_addr))(lpMachineName, hKey, phkResult);
+  }
 }
 
 namespace DetourHelper
@@ -209,9 +222,9 @@ void thread_main()
   // setup console
   //
   AllocConsole();
-  freopen("CONIN$", "r", stdin);
-  freopen("CONOUT$", "w", stdout);
-  freopen("CONOUT$", "w", stderr);
+  UNREFERENCED_PARAMETER(freopen("CONIN$", "r", stdin));
+  UNREFERENCED_PARAMETER(freopen("CONOUT$", "w", stdout));
+  UNREFERENCED_PARAMETER(freopen("CONOUT$", "w", stderr));
   SetConsoleTitleA("Log");
 
   // setup hooks
@@ -229,6 +242,7 @@ void thread_main()
   RegHooks::regenumvaluew_addr = get_func_addr(advapi32, "RegEnumValueW");
   RegHooks::regsetvalue_addr = get_func_addr(advapi32, "RegSetValueExW");
   RegHooks::RegCreateKeyExW_addr = get_func_addr(advapi32, "RegCreateKeyExW");
+  RegHooks::RegConnectRegistryW_addr = get_func_addr(advapi32, "RegConnectRegistryW");
 
   std::cout << "imports resolved\npreparing to hook" << std::endl;
 
@@ -239,6 +253,7 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regsetvalue_addr, RegHooks::hk_RegSetValueExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegCreateKeyExW_addr, RegHooks::hk_RegCreateKeyExW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegConnectRegistryW_addr, RegHooks::hk_RegConnectRegistryW);
 
 
   // native hooks
