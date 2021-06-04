@@ -23,7 +23,7 @@ I did eventually come up with a third method, and it was to let procmon do its t
 
 ## disabling defender
 
-### x64 Debug 
+## x64 Debug 
 
 If we breakpoint onto RegSetKeyValue it writes into "DisableAntiSpyware" which we can research on the internet  
 There is a lot of occurance with the following registry directory: "Software\\Policies\\Microsoft\\Windows Defender"  
@@ -92,14 +92,14 @@ Another one opened here:
 008CEFF8  043EB4C8  L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run"
 ```
 
-## enabling defender
+### enabling defender
 
 there seems to be a reference with "Policy Manager" using RegEnumKeyExW  
 
 It seems to call RegDeleteValueW on security health (see above)  
 
 
-## poc 2: hooks
+## reversing w hooks
 We are going to write a simple dll to inject into defender control to dump out the parameters of the functions we are interested in.  
 
 Here are the logs:
