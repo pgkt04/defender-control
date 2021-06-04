@@ -8,7 +8,7 @@
 // RegDeleteKeyW [done]
 // RegSetValueExW [done]
 // RegCreateKeyExW [done]
-// RegConnectRegistryW 
+// RegConnectRegistryW [done]
 // RegEnumKeyExW
 // RegCloseKey
 // RegQueryValueExW
@@ -81,8 +81,15 @@ namespace RegHooks
     LPDWORD lpcbData
   )
   {
-    std::cout << "[RegEnumValueW]" << std::endl;
-    std::cout << "lpValueName: " << wide_to_string(lpValueName).c_str() << std::endl;
+    // there is a bug with a ridiculously large string we want to skip if we see it
+    //
+    auto converted = wide_to_string(lpValueName);
+
+    if (converted.size() < MAX_PATH)
+    {
+      std::cout << "[RegEnumValueW]" << std::endl;
+      std::cout << "lpValueName: " << converted.c_str() << std::endl;
+    }
 
     return (reinterpret_cast<regenumvaluew_t>(regenumvaluew_addr))
       (hKey, dwIndex, lpValueName, lpcchValueName, lpReserved, lpType, lpData, lpcbData);
@@ -165,7 +172,7 @@ namespace RegHooks
     std::cout << "lpSubKey: " << wide_to_string(lpSubKey).c_str() << std::endl;
     std::cout << "lpClass: " << wide_to_string(lpClass).c_str() << std::endl;
 
-    return (reinterpret_cast<RegCreateKeyExW_t>(regsetvalue_addr))
+    return (reinterpret_cast<RegCreateKeyExW_t>(RegCreateKeyExW_addr))
       (hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition);
   }
 
