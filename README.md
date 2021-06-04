@@ -182,7 +182,107 @@ lpValueName: SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
 lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
 
 Routine to enable defender
-...
+
+
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
+[RegOpenKeyExW]
+lpValueName: Policy Manager
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegOpenKeyExW]
+lpValueName: SYSTEM\CurrentControlSet\Services\SecLogon
+[RegQueryValueExW]
+lpValueName: Start
+[RegQueryValueExW]
+lpValueName: Start
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
+[RegOpenKeyExW]
+lpValueName: Policy Manager
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
+[RegOpenKeyExW]
+lpValueName: Policy Manager
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegEnumValueW]
+lpValueName: SecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegQueryValueExW]
+lpValueName: SecurityHealth
+[RegQueryValueExW]
+lpValueName: SecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run
+[RegDeleteValueW]
+lpValueNameSecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegEnumValueW]
+lpValueName: SecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegQueryValueExW]
+lpValueName: WindowsDefender
+[RegQueryValueExW]
+lpValueName: WindowsDefender
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+[RegEnumValueW]
+lpValueName: WindowsDefender
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
+[RegQueryValueExW]
+lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
+
 ```
 
 
