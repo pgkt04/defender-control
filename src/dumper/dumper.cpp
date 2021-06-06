@@ -1,19 +1,5 @@
-// this is to poc for dumping out registry files as part 2 of the reversal
+// this is to poc for dumping out registry files 
 //
-// TO-DO:
-// inject and write findings
-// list of functions to hook from ADVAPI32
-// RegEnumValueW [done]
-// RegDeleteValueW [done]
-// RegDeleteKeyW [done]
-// RegSetValueExW [done]
-// RegCreateKeyExW [done]
-// RegConnectRegistryW [done]
-// RegEnumKeyExW [done]
-// RegCloseKey [not hooked since redundant]
-// RegQueryValueExW [done]
-// RegOpenKeyExW [done]
-// reformat printing
 
 #include "pch.h"
 
