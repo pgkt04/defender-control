@@ -1,19 +1,10 @@
 #include "dcontrol.h"
 
-namespace DCONTROL
+namespace REG
 {
-  // disables window defender
+  // reads a key from HKEY_LOCAL_MACHINE
   //
-  bool disable_control()
-  {
-    // add DisableRealtimeMonitoring if it does not exist
-    // set to 1 if it already exists
-    return true;
-  }
-
-  // Checks whether Real-Time Protection is activated on windows
-  //
-  bool check_defender(uint32_t flags)
+  DWORD read_key(const wchar_t* root_name, const wchar_t* value_name, uint32_t flags)
   {
     LSTATUS status;
     HKEY hkey;
@@ -27,25 +18,23 @@ namespace DCONTROL
 
     status = RegOpenKeyExW(
       HKEY_LOCAL_MACHINE,
-      L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection",
+      root_name,
       0,
       KEY_READ | KEY_WOW64_64KEY,
       &hkey
     );
 
-    // running by default if we can't identify it
-    //
     if (status)
     {
       if (flags & DBG_MSG)
-        std::cout << "Error opening Real-Time Protection key" << std::endl;
+        std::cout << "Error opening " << root_name << " key" << std::endl;
 
-      return true;
+      return -1;
     }
 
     status = RegQueryValueExW(
       hkey,
-      L"DisableRealtimeMonitoring",
+      value_name,
       0, NULL,
       reinterpret_cast<LPBYTE>(&result),
       &buff_sz
@@ -54,11 +43,66 @@ namespace DCONTROL
     if (status)
     {
       if (flags & DBG_MSG)
-        std::cout << "Failed to read DisableRealtimeMonitoring" << std::endl;
+        std::cout << "Failed to read " << result << std::endl;
 
-      return true;
+      return -1;
     }
 
-    return result == 0;
+    return result;
+  }
+
+  // creates a registry
+  //
+  bool create_registry()
+  {
+    return true;
+  }
+}
+
+namespace DCONTROL
+{
+  // disables window defender
+  //
+  bool disable_control()
+  {
+    // create DisableRealtimeMonitoring if it does not exist then set value to 1
+    // [RegCreateKeyExW]
+    // lpSubKey: SOFTWARE\Policies\Microsoft\Windows Defender
+    // [RegSetValueExW]
+    // lpValueName: DisableAntiSpyware
+    // [RegCreateKeyExW]
+    // lpSubKey: SOFTWARE\Microsoft\Windows Defender
+    // [RegCreateKeyExW]
+    // lpSubKey: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+    // [RegCreateKeyExW]
+    // lpSubKey: SYSTEM\CurrentControlSet\Services\WinDefend
+    // [RegSetValueExW]
+    // lpValueName: Start
+    // [RegOpenKeyExW]
+    // lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+    // [RegQueryValueExW]
+    // lpValueName: SecurityHealth
+    // [RegCreateKeyExW]
+    // lpSubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run
+    // [RegSetValueExW]
+    // lpValueName: SecurityHealth
+    // [RegOpenKeyExW]
+    // lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+    // [RegEnumValueW]
+    // lpValueName: SecurityHealth
+    // [RegOpenKeyExW]
+    // lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+    // [RegQueryValueExW]
+    // lpValueName: DisableRealtimeMonitoring
+    return true;
+  }
+
+  // Checks whether Real-Time Protection is activated on windows
+  //
+  bool check_defender(uint32_t flags)
+  {
+    return REG::read_key(
+      L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection",
+      L"DisableRealtimeMonitoring") == 0;
   }
 }
