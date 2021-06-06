@@ -318,7 +318,13 @@ lpValueName: DisableRealtimeMonitoring
 ```
 
 To enable the AV, we just do the opposite of what we needed to disable the AV.
-  
-## tldr
 
-to disable windows defender we need to edit the following registries:  
+But theres, a catch. In a newer recent windows update - you can no longer disable the defender via registries. Well, our program runs completely in usermode, so there must be another way its making these registry changes - most likely through the powershell command  Set-MpPreference if we do some research into changing the registry. So we will need to take a peek into the wmic api it accesses.  
+Luckily for us, all this stuff is documented. Check out these two links:  
+- https://docs.microsoft.com/en-us/powershell/module/defender/set-mppreference?view=windowsserver2019-ps
+- https://docs.microsoft.com/en-us/windows/win32/wmisdk/wmi-c---application-examples
+
+
+
+
+  
