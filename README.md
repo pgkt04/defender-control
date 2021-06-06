@@ -1,5 +1,5 @@
 # defender-control
-current a work in progress - feel free to come back to check on any updates
+currently a work in progress - feel free to come back to check on any updates
   
 ## what is this project?  
 we all know that disabling windefender is a pain going through countless registries.  
