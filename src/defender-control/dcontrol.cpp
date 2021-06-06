@@ -48,13 +48,32 @@ namespace REG
       return -1;
     }
 
+    RegCloseKey(hkey);
+
     return result;
   }
 
   // creates a registry
   //
-  bool create_registry()
+  bool create_registry(const wchar_t* root_name)
   {
+    HKEY hkey;
+    LSTATUS status;
+
+    status = RegOpenKeyExW(
+      HKEY_LOCAL_MACHINE,
+      root_name,
+      0,
+      KEY_ALL_ACCESS | KEY_WOW64_64KEY,
+      &hkey
+    );
+
+    if (status)
+    {
+      std::cout << "Error creating registry " << root_name << std::endl;
+      return false;
+    }
+
     return true;
   }
 }
