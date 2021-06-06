@@ -44,26 +44,24 @@ namespace RegHooks
   using enable_def_helper_t = int(__thiscall*)(void*, int, DWORD*);
   uintptr_t enable_def_help_addr;
 
-  int __fastcall enable_def_helper(void* pThis, void* edx, int a2, DWORD* a3)
+  int __fastcall hk_enable_def(void* pThis, void* edx, int a2, DWORD* a3)
   {
-    std::cout << "activation routine" << std::endl;
-    auto v37 = *(DWORD*)(a2 + 8);
-    std::cout << "v37: " << v37 << std::endl;
+    std::cout << "enabling defender" << std::endl;
     return (reinterpret_cast<enable_def_helper_t>(enable_def_help_addr))(pThis, a2, a3);
   }
 
-  // WM_COMMAND handler
-  // base+05F48E
-  // can be found by tracing the main function and looking for WM_COMMAND (0x0111)
-  // however this function doesn't seem to be called on runtime
-  //
-  using handle_command_t = char(__stdcall*)(int, UINT, UINT);
-  uintptr_t handle_command_addr;
+  // Disable defender handler
+  using disable_def_t = int(__thiscall*)(void*, int, DWORD*);
+  uintptr_t disable_def_addr;
 
-  char __stdcall HandleCommand(int a1, UINT wparam, UINT lparam)
+  // disable defender routine:
+  // 0x6AEAF
+  // int __thiscall DisableDefender(void *this, int a1, _DWORD *a2)
+
+  int __fastcall hk_disable_def(void* pThis, void* edx, int a1, DWORD* a2)
   {
-    std::cout << "handlecommand(" << wparam << ", " << lparam << ")" << std::endl;
-    return (reinterpret_cast<handle_command_t>(handle_command_addr))(a1, wparam, lparam);
+    std::cout << "disabling defender" << std::endl;
+    return (reinterpret_cast<disable_def_t>(disable_def_addr))(pThis, a1, a2);
   }
 
   // hook for RegEnumValueW
@@ -148,6 +146,10 @@ namespace RegHooks
   {
     std::cout << "[RegSetValueExW]" << std::endl;
     std::cout << "lpValueName: " << wide_to_string(lpValueName).c_str() << std::endl;
+    std::cout << "Reserved: " << Reserved << std::endl;
+    std::cout << "dwType: " << dwType << std::endl;
+    std::cout << "cbData: " << cbData << std::endl;
+
     return (reinterpret_cast<regsetkeyvalueexw_t>(regsetvalue_addr))(hKey, lpValueName, Reserved, dwType, lpData, cbData);
   }
 
@@ -171,8 +173,14 @@ namespace RegHooks
   )
   {
     std::cout << "[RegCreateKeyExW]" << std::endl;
+    std::cout << "hKey: " << hKey << std::endl;
     std::cout << "lpSubKey: " << wide_to_string(lpSubKey).c_str() << std::endl;
+    std::cout << "lpClass: " << wide_to_string(lpClass).c_str() << std::endl;
     std::cout << "samDesired: " << samDesired << std::endl;
+    std::cout << "Reserved: " << Reserved << std::endl;
+    std::cout << "lpSecurityAttributes: " << lpSecurityAttributes << std::endl;
+    std::cout << "dwOptions: " << dwOptions << std::endl;
+    std::cout << "lpdwDisposition: " << lpdwDisposition << std::endl;
 
     return (reinterpret_cast<RegCreateKeyExW_t>(RegCreateKeyExW_addr))
       (hKey, lpSubKey, Reserved, lpClass, dwOptions, samDesired, lpSecurityAttributes, phkResult, lpdwDisposition);
@@ -343,23 +351,20 @@ void thread_main()
   //DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
   //DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
   //DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
-  DetourHelper::perf_hook((PVOID*)&RegHooks::regsetvalue_addr, RegHooks::hk_RegSetValueExW);
-  DetourHelper::perf_hook((PVOID*)&RegHooks::RegCreateKeyExW_addr, RegHooks::hk_RegCreateKeyExW);
+  //DetourHelper::perf_hook((PVOID*)&RegHooks::regsetvalue_addr, RegHooks::hk_RegSetValueExW);
+  //DetourHelper::perf_hook((PVOID*)&RegHooks::RegCreateKeyExW_addr, RegHooks::hk_RegCreateKeyExW);
   //DetourHelper::perf_hook((PVOID*)&RegHooks::RegConnectRegistryW_addr, RegHooks::hk_RegConnectRegistryW);
   //DetourHelper::perf_hook((PVOID*)&RegHooks::RegEnumKeyExW_addr, RegHooks::hk_RegEnumKeyExW);
   //DetourHelper::perf_hook((PVOID*)&RegHooks::RegQueryValueExW_addr, RegHooks::hk_RegQueryValueExW);
-  DetourHelper::perf_hook((PVOID*)&RegHooks::RegOpenKeyExW_addr, RegHooks::hk_RegOpenKeyExW);
+  //DetourHelper::perf_hook((PVOID*)&RegHooks::RegOpenKeyExW_addr, RegHooks::hk_RegOpenKeyExW);
 
   // native hooks
-  // pretty redunant dont need to enable them
   // 
-#if 0
   RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
-  DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::enable_def_helper);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::hk_enable_def);
 
-  RegHooks::handle_command_addr = (uintptr_t)GetModuleHandleA(0) + 0x5F48E;
-  DetourHelper::perf_hook((PVOID*)&RegHooks::handle_command_addr, RegHooks::HandleCommand);
-#endif
+  RegHooks::disable_def_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AEAF;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::disable_def_addr, RegHooks::hk_disable_def);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
