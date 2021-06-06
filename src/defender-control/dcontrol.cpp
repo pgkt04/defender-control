@@ -161,6 +161,35 @@ namespace REG
 
 namespace DCONTROL
 {
+  // Sets the programs debug priviliges
+  bool Setprivilege(LPCSTR privilege, BOOL enable)
+  {
+    TOKEN_PRIVILEGES priv = { 0,0,0,0 };
+    HANDLE token = nullptr;
+    LUID luid = { 0,0 };
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token)) {
+      if (token)
+        CloseHandle(token);
+      return false;
+    }
+    if (!LookupPrivilegeValueA(nullptr, privilege, &luid)) {
+      if (token)
+        CloseHandle(token);
+      return false;
+    }
+    priv.PrivilegeCount = 1;
+    priv.Privileges[0].Luid = luid;
+    priv.Privileges[0].Attributes = enable ? SE_PRIVILEGE_ENABLED : SE_PRIVILEGE_REMOVED;
+    if (!AdjustTokenPrivileges(token, false, &priv, 0, nullptr, nullptr)) {
+      if (token)
+        CloseHandle(token);
+      return false;
+    }
+    if (token)
+      CloseHandle(token);
+    return true;
+  }
+
   char sub_43604B()
   {
     char v0; // bl
@@ -196,6 +225,8 @@ namespace DCONTROL
       std::cout << "permission error" << std::endl;
       return false;
     }
+
+    Setprivilege(SE_DEBUG_NAME, TRUE);
 
     HKEY hkey;
 
@@ -276,8 +307,8 @@ namespace DCONTROL
       {
         std::cout << "failed to disable DisableRealtimeMonitoring" << std::endl;
         return false;
-      }
-    }
+  }
+}
 #endif
 
     return true;
