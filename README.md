@@ -2,15 +2,12 @@
 currently a work in progress - feel free to come back to check on any updates
   
 ## what is this project?  
-we all know that disabling windefender is a pain going through countless registries.  
-the next easiest solution is to use freeware and currently the most popular one is by sordum. (i won't link here - you can find it on the first google result)
+We all know that disabling windefender is a pain going through countless registries.  
+The next easiest solution is to use freeware and currently the most popular one is by sordum. (i won't link here - you can find it on the first google result)
 however, i was first wary of this program and the virus total detections; althought they are claimed to be false positive.
 but i know that this program has worked well for me and friends in the past.
   
-my second suspicion was this program was the fact it connected to the internet using a few of the imported functions. however after some debugging it seemed to be safe.
-  
-but for those who like open source, i took apart this program to put together a poc to disable windows defender without having to worry about installing malware.
-  
+but for those who like open source, i took apart this program and did the research to disable windows defender in an easy open source manner without having to worry about running malware.
 
 ## reversal
 Our tool of choice will be IDA & x64 debugger for this task  
@@ -307,6 +304,56 @@ lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
 lpValueName: DisableRealtimeMonitoring
 ```
 
+### Dumping VTable Calls
+```
+[Control Table] 0x495b78
+[Control Table] 0x493658
+[Control Table] 0x4932f8
+[Control Table] 0x494e1c
+[Control Table] 0x4949e4
+[Control Table] 0x4965e0
+[Control Table] 0x496088
+[Control Table] 0x4951c4
+[Control Table] 0x4960d0
+[Control Table] 0x49463c
+[Control Table] 0x493808
+[Control Table] 0x493850
+[Control Table] 0x494ed0
+[Control Table] 0x49382c
+[Control Table] 0x49532c
+[Control Table] 0x493874
+[Control Table] 0x493898
+[Control Table] 0x4931fc
+[Control Table] 0x4931b4
+[Control Table] 0x495500
+[Control Table] 0x495cbc
+[Control Table] 0x495ce0
+[Control Table] 0x4958cc
+[Control Table] 0x494a74
+[Control Table] 0x495c08
+[Control Table] 0x494cfc
+[Control Table] 0x493c40
+[Control Table] 0x493e5c
+[Control Table] 0x493ea4
+[Control Table] 0x493b8c
+[Control Table] 0x495b0c
+[Control Table] 0x495c2c
+[Control Table] 0x493f7c
+[Control Table] 0x4930dc
+[Control Table] 0x493fe8
+[Control Table] 0x494c00
+[Control Table] 0x495644
+[Control Table] 0x495428
+[Control Table] 0x496430
+[Control Table] 0x4963e8
+[Control Table] 0x4954b8
+[Control Table] 0x4945d0
+[Control Table] 0x496040
+[Control Table] 0x4960ac
+[Control Table] 0x494a50
+[Control Table] 0x495be4
+```
+
 To enable the AV, we just do the opposite of what we needed to disable the AV.
 
 ## Windows Tamper Protection
@@ -316,7 +363,9 @@ Luckily for us, all this stuff is documented. Check out these two links:
 - https://docs.microsoft.com/en-us/powershell/module/defender/set-mppreference?view=windowsserver2019-ps
 - https://docs.microsoft.com/en-us/windows/win32/wmisdk/wmi-c---application-examples
 
-
+So, since its kind of difficult to debug the values DefenderControl accesses and this stuff is pretty well documented - we are going to base our work off research.
+There is a nice website that documents stuff like this here: https://privacy.sexy/  
+We can implement a WMIC implementation to do it in C++ without having to make calls to powershell.
 
 
   
