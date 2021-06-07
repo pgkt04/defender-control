@@ -104,7 +104,6 @@ namespace REG
       return false;
     }
     return true;
-
   }
 }
 
@@ -115,31 +114,41 @@ namespace WMIC
 namespace DCONTROL
 {
   // Sets the programs debug priviliges
-  bool Setprivilege(LPCSTR privilege, BOOL enable)
+  bool set_privilege(LPCSTR privilege, BOOL enable)
   {
     TOKEN_PRIVILEGES priv = { 0,0,0,0 };
     HANDLE token = nullptr;
     LUID luid = { 0,0 };
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token)) {
+
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token)) 
+    {
       if (token)
         CloseHandle(token);
+
       return false;
     }
-    if (!LookupPrivilegeValueA(nullptr, privilege, &luid)) {
+
+    if (!LookupPrivilegeValueA(nullptr, SE_DEBUG_NAME, &luid)) 
+    {
       if (token)
         CloseHandle(token);
+
       return false;
     }
     priv.PrivilegeCount = 1;
     priv.Privileges[0].Luid = luid;
-    priv.Privileges[0].Attributes = enable ? SE_PRIVILEGE_ENABLED : SE_PRIVILEGE_REMOVED;
-    if (!AdjustTokenPrivileges(token, false, &priv, 0, nullptr, nullptr)) {
+    priv.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+
+    if (!AdjustTokenPrivileges(token, false, &priv, 0, nullptr, nullptr))
+    {
       if (token)
         CloseHandle(token);
+
       return false;
     }
     if (token)
       CloseHandle(token);
+
     return true;
   }
 
@@ -179,7 +188,7 @@ namespace DCONTROL
       return false;
     }
 
-    Setprivilege(SE_DEBUG_NAME, TRUE);
+    set_privilege(SE_DEBUG_NAME, TRUE);
 
     HKEY hkey;
 

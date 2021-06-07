@@ -18,6 +18,25 @@ std::string wide_to_string(const std::wstring& s) {
 
 namespace RegHooks
 {
+  // 0x464DC  
+  // 
+  using alt_start_proc_t = char(__stdcall*)(LPCWSTR, LPCWSTR, LPCWSTR, LPVOID, LPWSTR,
+    HANDLE, LPCWSTR, LPSTARTUPINFOW, LPPROCESS_INFORMATION);
+  uintptr_t alt_start_proc_addr;
+
+  char __stdcall hk_alt_start_proc(LPCWSTR lpUsername, LPCWSTR lpDomain,
+    LPCWSTR lpPassword, LPVOID Environment, LPWSTR lpCommandLine,
+    HANDLE TokenHandle, LPCWSTR lpCurrentDirectory, LPSTARTUPINFOW lpStartupInfo,
+    LPPROCESS_INFORMATION lpProcessInformation)
+  {
+    std::cout << "[Alt Start Proc]" << std::endl;
+
+    return (reinterpret_cast<alt_start_proc_t>(alt_start_proc_addr))(lpUsername, lpDomain,
+      lpPassword, Environment, lpCommandLine,
+      TokenHandle, lpCurrentDirectory, lpStartupInfo,
+      lpProcessInformation);
+  }
+
   // 0x45E0
   //
   using control_table_t = int(__stdcall*)(DWORD*, int);
@@ -29,52 +48,6 @@ namespace RegHooks
     0x494db0, 0x495620, 0x493b20, 0x4954dc,
     0x4947a4, 0x495b30, 0x494d44
   };
-
-  /*
-  [Control Table] 0x493658
-  [Control Table] 0x4932f8
-  [Control Table] 0x494e1c
-  [Control Table] 0x4949e4
-  [Control Table] 0x4965e0
-  [Control Table] 0x496088
-  [Control Table] 0x4951c4
-  [Control Table] 0x4960d0
-  [Control Table] 0x49463c
-  [Control Table] 0x493808
-  [Control Table] 0x493850
-  [Control Table] 0x494ed0
-  [Control Table] 0x49382c
-  [Control Table] 0x49532c
-  [Control Table] 0x493874 DLLSTRUCTGETSIZE
-  [Control Table] 0x493898 DLLSTRUCTSETDATA
-  [Control Table] 0x4931fc sub_45AA7F
-  [Control Table] 0x4931b4 int __stdcall sub_45AC96(int a1, int *a2)
-  [Control Table] 0x495500 REGISTRY DEFENDER
-  [Control Table] 0x495cbc STRINGTOBINARY
-  [Control Table] 0x495ce0 STRINGTRIMLEFT
-  [Control Table] 0x4958cc STRING
-  [Control Table] 0x494a74
-  [Control Table] 0x495c08
-  [Control Table] 0x494cfc INT
-  [Control Table] 0x493c40
-  [Control Table] 0x493e5c
-  [Control Table] 0x493ea4
-  [Control Table] 0x493b8c
-  [Control Table] 0x495b0c
-  [Control Table] 0x495c2c
-  [Control Table] 0x4930dc
-  [Control Table] 0x493fe8
-  [Control Table] 0x495644
-  [Control Table] 0x495428
-  [Control Table] 0x496430
-  [Control Table] 0x4963e8
-  [Control Table] 0x4954b8
-  [Control Table] 0x4945d0
-  [Control Table] 0x496040
-  [Control Table] 0x4960ac
-  [Control Table] 0x494a50
-  [Control Table] 0x495be4
-  */
 
   int __stdcall hk_ControlTable(DWORD* a1, int a2)
   {
@@ -388,6 +361,36 @@ namespace RegHooks
     return (reinterpret_cast<RegOpenKeyExW_t>(RegOpenKeyExW_addr))
       (hKey, lpSubKey, ulOptions, samDesired, phkResult);
   }
+
+  // CreateProcessW 
+  // ms docs: https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-createprocessw
+  //
+  using CreateProcessW_t = BOOL(__stdcall*)(LPCWSTR, LPWSTR, LPSECURITY_ATTRIBUTES,
+    LPSECURITY_ATTRIBUTES, BOOL, DWORD, LPVOID, LPCWSTR, LPSTARTUPINFOW, LPPROCESS_INFORMATION);
+  uintptr_t CreateProcessW_addr;
+
+  BOOL __stdcall hk_CreateProcessW(
+    LPCWSTR               lpApplicationName,
+    LPWSTR                lpCommandLine,
+    LPSECURITY_ATTRIBUTES lpProcessAttributes,
+    LPSECURITY_ATTRIBUTES lpThreadAttributes,
+    BOOL                  bInheritHandles,
+    DWORD                 dwCreationFlags,
+    LPVOID                lpEnvironment,
+    LPCWSTR               lpCurrentDirectory,
+    LPSTARTUPINFOW        lpStartupInfo,
+    LPPROCESS_INFORMATION lpProcessInformation
+  )
+  {
+    std::cout << "[CreateProcessW]" << std::endl;
+    std::cout << "lpCommandLine: " << wide_to_string(lpCommandLine).c_str() << std::endl;
+
+    return (reinterpret_cast<CreateProcessW_t>(CreateProcessW_addr))(
+      lpApplicationName, lpCommandLine, lpProcessAttributes, lpThreadAttributes,
+      bInheritHandles, dwCreationFlags, lpEnvironment, lpCurrentDirectory,
+      lpStartupInfo, lpProcessInformation);
+  }
+
 }
 
 namespace DetourHelper
@@ -433,10 +436,17 @@ void thread_main()
   // setup hooks
   //
   auto advapi32 = GetModuleHandleA("Advapi32.dll");
+  auto kernel32 = GetModuleHandleA("Kernel32.dll");
 
   if (!advapi32)
   {
     std::cout << "advapi32.dll not found" << std::endl;
+    return;
+  }
+
+  if (!kernel32)
+  {
+    std::cout << "kernel32.dll not found" << std::endl;
     return;
   }
 
@@ -449,6 +459,8 @@ void thread_main()
   RegHooks::RegEnumKeyExW_addr = get_func_addr(advapi32, "RegEnumKeyExW");
   RegHooks::RegQueryValueExW_addr = get_func_addr(advapi32, "RegQueryValueExW");
   RegHooks::RegOpenKeyExW_addr = get_func_addr(advapi32, "RegOpenKeyExW");
+  RegHooks::CreateProcessW_addr = get_func_addr(kernel32, "CreateProcessW");
+
 
   std::cout << "imports resolved\npreparing to hook" << std::endl;
 
@@ -465,6 +477,9 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegQueryValueExW_addr, RegHooks::hk_RegQueryValueExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegOpenKeyExW_addr, RegHooks::hk_RegOpenKeyExW);
 #endif
+
+  DetourHelper::perf_hook((PVOID*)&RegHooks::CreateProcessW_addr, RegHooks::hk_CreateProcessW);
+
 
   // native hooks
   // 
@@ -483,10 +498,13 @@ void thread_main()
 
   RegHooks::wmic_2_addr = (uintptr_t)GetModuleHandleA(0) + 0x75ACA;
   DetourHelper::perf_hook((PVOID*)&RegHooks::wmic_2_addr, RegHooks::hk_wmic_2);
-#endif
 
   RegHooks::ControlTable_addr = (uintptr_t)GetModuleHandleA(0) + 0x45E0;
   DetourHelper::perf_hook((PVOID*)&RegHooks::ControlTable_addr, RegHooks::hk_ControlTable);
+#endif
+
+  RegHooks::alt_start_proc_addr = (uintptr_t)GetModuleHandleA(0) + 0x464DC;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::alt_start_proc_addr, RegHooks::hk_alt_start_proc);
 
 }
 

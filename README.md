@@ -355,6 +355,8 @@ lpValueName: DisableRealtimeMonitoring
 ```
 
 To enable the AV, we just do the opposite of what we needed to disable the AV.
+  
+Upon starting the AV, the program calls CreateProcessW on C:\Windows\System32\SecurityHealthSystray.exe
 
 ## Windows Tamper Protection
 
