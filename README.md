@@ -2,15 +2,12 @@
 currently a work in progress - feel free to come back to check on any updates
   
 ## what is this project?  
-we all know that disabling windefender is a pain going through countless registries.  
-the next easiest solution is to use freeware and currently the most popular one is by sordum. (i won't link here - you can find it on the first google result)
+We all know that disabling windefender is a pain going through countless registries.  
+The next easiest solution is to use freeware and currently the most popular one is by sordum. (i won't link here - you can find it on the first google result)
 however, i was first wary of this program and the virus total detections; althought they are claimed to be false positive.
 but i know that this program has worked well for me and friends in the past.
   
-my second suspicion was this program was the fact it connected to the internet using a few of the imported functions. however after some debugging it seemed to be safe.
-  
-but for those who like open source, i took apart this program to put together a poc to disable windows defender without having to worry about installing malware.
-  
+but for those who like open source, i took apart this program and did the research to disable windows defender in an easy open source manner without having to worry about running malware.
 
 ## reversal
 Our tool of choice will be IDA & x64 debugger for this task  
