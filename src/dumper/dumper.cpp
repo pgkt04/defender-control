@@ -94,7 +94,6 @@ namespace RegHooks
       cache.push_back(ret);
     }
 
-
     return ret;
   }
 

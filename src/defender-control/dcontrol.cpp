@@ -2,11 +2,6 @@
 
 namespace REG
 {
-  void init_key(DWORD* a1)
-  {
-    *a1 = -2147483646;
-  }
-
   // reads a key from HKEY_LOCAL_MACHINE
   //
   DWORD read_key(const wchar_t* root_name, const wchar_t* value_name, uint32_t flags)
@@ -17,15 +12,6 @@ namespace REG
     DWORD buff_sz = sizeof(DWORD);
 
     // https://docs.microsoft.com/en-us/windows/win32/winprog64/accessing-an-alternate-registry-view
-    // KEY_WOW64_64KEY if we are in an x86 environment
-    // KEY_ALL_ACCESS to access
-    // but we only need to read for this call
-
-#if 0
-    HKEY temp{};
-    HKEY phkResult;
-    RegConnectRegistryW(0, temp, &phkResult);
-#endif
 
     status = RegOpenKeyExW(
       HKEY_LOCAL_MACHINE,
@@ -70,39 +56,6 @@ namespace REG
   {
     LSTATUS status;
 
-#if 0
-    HKEY temp{};
-    HKEY phkResult;
-    RegConnectRegistryW(0, temp, &phkResult);
-#endif
-
-#if 0
-    // 0x20119 or 131353
-    status = RegOpenKeyExW(
-      HKEY_LOCAL_MACHINE,
-      root_name,
-      0,
-      131353,
-      &hkey
-    );
-
-    if (status == ERROR_SUCCESS)
-    {
-      std::wcout << "Successfully opened " << root_name << std::endl;
-      return true;
-    }
-#endif
-
-    //[RegCreateKeyExW]
-    //hKey: 80000002
-    //lpSubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run
-    //lpClass:
-    //samDesired: 131334
-    //Reserved: 0
-    //lpSecurityAttributes: 00000000
-    //dwOptions: 0
-    //lpdwDisposition: 008BF04C
-
     DWORD dwDisposition;
 
     status = RegCreateKeyExW(
@@ -122,10 +75,6 @@ namespace REG
       std::wcout << "could not find or create " << root_name << " error: " << status << std::endl;
       return false;
     }
-
-#if 0
-    std::cout << "disposition: " << dwDisposition << std::endl;
-#endif
 
     return true;
   }
@@ -157,6 +106,10 @@ namespace REG
     return true;
 
   }
+}
+
+namespace WMIC
+{
 }
 
 namespace DCONTROL
