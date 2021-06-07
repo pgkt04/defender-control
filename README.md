@@ -367,7 +367,6 @@ Luckily for us, all this stuff is documented. Check out these two links:
 
 So, since its kind of difficult to debug the values DefenderControl accesses and this stuff is pretty well documented - we are going to base our work off research.
 There is a nice website that documents stuff like this here: https://privacy.sexy/  
-We can implement a WMIC implementation to do it in C++ without having to make calls to powershell.
 
 
   
