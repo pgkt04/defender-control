@@ -18,20 +18,108 @@ std::string wide_to_string(const std::wstring& s) {
 
 namespace RegHooks
 {
+  // 0x45E0
+  //
+  using control_table_t = int(__stdcall*)(DWORD*, int);
+  uintptr_t ControlTable_addr;
+
+  std::vector<int> cache =
+  {
+    0x493730, 0x49451c, 0x4950c8, 0x4956f8,
+    0x494db0, 0x495620, 0x493b20, 0x4954dc,
+    0x4947a4, 0x495b30, 0x494d44
+  };
+
+  /*
+  [Control Table] 0x493658
+  [Control Table] 0x4932f8
+  [Control Table] 0x494e1c
+  [Control Table] 0x4949e4
+  [Control Table] 0x4965e0
+  [Control Table] 0x496088
+  [Control Table] 0x4951c4
+  [Control Table] 0x4960d0
+  [Control Table] 0x49463c
+  [Control Table] 0x493808
+  [Control Table] 0x493850
+  [Control Table] 0x494ed0
+  [Control Table] 0x49382c
+  [Control Table] 0x49532c
+  [Control Table] 0x493874 DLLSTRUCTGETSIZE
+  [Control Table] 0x493898 DLLSTRUCTSETDATA
+  [Control Table] 0x4931fc sub_45AA7F
+  [Control Table] 0x4931b4 int __stdcall sub_45AC96(int a1, int *a2)
+  [Control Table] 0x495500 REGISTRY DEFENDER
+  [Control Table] 0x495cbc STRINGTOBINARY
+  [Control Table] 0x495ce0 STRINGTRIMLEFT
+  [Control Table] 0x4958cc STRING
+  [Control Table] 0x494a74
+  [Control Table] 0x495c08
+  [Control Table] 0x494cfc INT
+  [Control Table] 0x493c40
+  [Control Table] 0x493e5c
+  [Control Table] 0x493ea4
+  [Control Table] 0x493b8c
+  [Control Table] 0x495b0c
+  [Control Table] 0x495c2c
+  [Control Table] 0x4930dc
+  [Control Table] 0x493fe8
+  [Control Table] 0x495644
+  [Control Table] 0x495428
+  [Control Table] 0x496430
+  [Control Table] 0x4963e8
+  [Control Table] 0x4954b8
+  [Control Table] 0x4945d0
+  [Control Table] 0x496040
+  [Control Table] 0x4960ac
+  [Control Table] 0x494a50
+  [Control Table] 0x495be4
+  */
+
+  int __stdcall hk_ControlTable(DWORD* a1, int a2)
+  {
+    auto ret = (reinterpret_cast<control_table_t>(ControlTable_addr))(a1, a2);
+
+    bool found = false;
+
+    for (auto i : cache)
+    {
+      if (i == ret)
+        found = true;
+    }
+
+    if (!found)
+    {
+      std::cout << "[Control Table] 0x" << std::hex << ret << std::endl;
+      cache.push_back(ret);
+    }
+
+
+    return ret;
+  }
+
   // int __stdcall wmic_1(int a1, _DWORD *a2)
   // 0x6CDA0
   // 
-  int __stdcall wmic_1(int a1, DWORD* a2)
+  using wmic_1_t = int(__stdcall*)(int, DWORD*);
+  uintptr_t wmic_1_addr;
+
+  int __stdcall hk_wmic_1(int a1, DWORD* a2)
   {
-    return 0;
+    std::cout << "[wmic_1]" << std::endl;
+    return (reinterpret_cast<wmic_1_t>(wmic_1_addr))(a1, a2);
   }
 
   // int __thiscall hk_wmic_2(void* this, int a2, int a3)
   // address: 0x75ACA
   //
+  using hk_wmic_2_t = int(__thiscall*)(void*, int, int);
+  uintptr_t wmic_2_addr;
+
   int __fastcall hk_wmic_2(void* pthis, void* edx, int a2, int a3)
   {
-    return 0;
+    std::cout << "[wmic_2]" << std::endl;
+    return (reinterpret_cast<hk_wmic_2_t>(wmic_2_addr))(pthis, a2, a3);
   }
 
   // wmic helper for setup
@@ -381,6 +469,7 @@ void thread_main()
 
   // native hooks
   // 
+#if 0
   RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
   DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::hk_enable_def);
 
@@ -389,6 +478,17 @@ void thread_main()
 
   RegHooks::wmic_helper_addr = (uintptr_t)GetModuleHandleA(0) + 0x7A999;
   DetourHelper::perf_hook((PVOID*)&RegHooks::wmic_helper_addr, RegHooks::hk_wmic_helper);
+
+  RegHooks::wmic_1_addr = (uintptr_t)GetModuleHandleA(0) + 0x6CDA0;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::wmic_1_addr, RegHooks::hk_wmic_1);
+
+  RegHooks::wmic_2_addr = (uintptr_t)GetModuleHandleA(0) + 0x75ACA;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::wmic_2_addr, RegHooks::hk_wmic_2);
+#endif
+
+  RegHooks::ControlTable_addr = (uintptr_t)GetModuleHandleA(0) + 0x45E0;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::ControlTable_addr, RegHooks::hk_ControlTable);
+
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,

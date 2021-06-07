@@ -12,6 +12,7 @@
 #include <Psapi.h>
 #include <string>
 #include <detours.h>
+#include <vector>
 #pragma comment(lib, "detours.lib")
 
 #endif //PCH_H
