@@ -18,6 +18,45 @@ std::string wide_to_string(const std::wstring& s) {
 
 namespace RegHooks
 {
+  // 0x33FA4
+  //
+  using StartProcWrapper_t = BOOL(__stdcall*)(LPWSTR);
+  uintptr_t StartProcWrapper_addr;
+
+  BOOL __stdcall hk_StartProcWrapper(LPWSTR lpCommandLine)
+  {
+    std::cout << "[Start Proc Wrapper]" << std::endl;
+    return (reinterpret_cast<StartProcWrapper_t>(StartProcWrapper_addr))(lpCommandLine);
+  }
+
+  // cmdlinestuff, 10/10 naming im tired
+  // 0x63F19
+  //
+  using cmdlinestuff_t = int(__stdcall*)(DWORD*, char, char, int, int);
+  uintptr_t cmdlinestuff_addr;
+
+  int __stdcall hk_cmdlinestuff(DWORD* a1, char a2, char a3, int a4, int a5)
+  {
+    std::cout << "[cmd stuff]" << std::endl;
+
+    return (reinterpret_cast<cmdlinestuff_t>(cmdlinestuff_addr))
+      (a1, a2, a3, a4, a5);
+  }
+
+
+  // 0x57C08
+  //
+  using execute_shell_stuff_t = int(__stdcall*)(DWORD*, char, int, unsigned int, DWORD*);
+  uintptr_t execute_shell_stuff_addr;
+
+  int __stdcall hk_execute_shell_stuff(DWORD* a1, char a2, int a3, unsigned int a4, DWORD* a5)
+  {
+    std::cout << "[shell execute stuff]" << std::endl;
+
+    return (reinterpret_cast<execute_shell_stuff_t>(execute_shell_stuff_addr))
+      (a1, a2, a3, a4, a5);
+  }
+
   // 0x464DC  
   // 
   using alt_start_proc_t = char(__stdcall*)(LPCWSTR, LPCWSTR, LPCWSTR, LPVOID, LPWSTR,
@@ -506,6 +545,16 @@ void thread_main()
   RegHooks::alt_start_proc_addr = (uintptr_t)GetModuleHandleA(0) + 0x464DC;
   DetourHelper::perf_hook((PVOID*)&RegHooks::alt_start_proc_addr, RegHooks::hk_alt_start_proc);
 
+  RegHooks::cmdlinestuff_addr = (uintptr_t)GetModuleHandleA(0) + 0x63F19;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::cmdlinestuff_addr, RegHooks::hk_cmdlinestuff);
+
+  RegHooks::StartProcWrapper_addr = (uintptr_t)GetModuleHandleA(0) + 0x33FA4;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::StartProcWrapper_addr, RegHooks::hk_StartProcWrapper);
+
+
+  RegHooks::execute_shell_stuff_addr = (uintptr_t)GetModuleHandleA(0) + 0x33FA4;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::execute_shell_stuff_addr, RegHooks::hk_execute_shell_stuff);
+   
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
