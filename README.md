@@ -1,4 +1,6 @@
 # defender-control
+currently a work in progress - feel free to come back to check on any updates
+  
 ## what is this project?  
 we all know that disabling windefender is a pain going through countless registries.  
 the next easiest solution is to use freeware and currently the most popular one is by sordum. (i won't link here - you can find it on the first google result)
@@ -31,13 +33,7 @@ It is found under the parent directory of HKLM64.
 
 ```asm
 008CE9E8  043DCA88  L"HKLM64"
-008CE9EC  00000006  
-008CE9F0  00000008  
-008CE9F4  043DCAB0  
-008CE9F8  043DCA60  
-008CE9FC  00000000  
-008CEA00  00000008  
-008CEA04  043DC950  
+...
 008CEA08  043DCBC0  L"SOFTWARE\\Policies\\Microsoft\\Windows Defender"
 ```
 
@@ -45,13 +41,7 @@ The second breakpoint leads us here:
 
 ```asm
 008CE8F0  043DCFE8  L"HKLM64"
-008CE8F4  00000006  
-008CE8F8  00000008  
-008CE8FC  043DD010  
-008CE900  043DCFC0  
-008CE904  00000000  
-008CE908  00000008  
-008CE90C  043DCEB0  
+...
 008CE910  043DD120  L"SYSTEM\\CurrentControlSet\\Services\\WinDefend"
 ```
 
