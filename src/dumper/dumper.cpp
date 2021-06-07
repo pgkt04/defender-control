@@ -18,13 +18,37 @@ std::string wide_to_string(const std::wstring& s) {
 
 namespace RegHooks
 {
+  // int __stdcall wmic_1(int a1, _DWORD *a2)
+  // 0x6CDA0
+  // 
+  int __stdcall wmic_1(int a1, DWORD* a2)
+  {
+    return 0;
+  }
+
+  // int __thiscall hk_wmic_2(void* this, int a2, int a3)
+  // address: 0x75ACA
+  //
+  int __fastcall hk_wmic_2(void* pthis, void* edx, int a2, int a3)
+  {
+    return 0;
+  }
+
+  // wmic helper for setup
+  // address: 0x7A999
+  // 
+  using wmic_helper_t = int(__stdcall*)(int, int, wchar_t*, void*, wchar_t*, void*);
+  uintptr_t wmic_helper_addr;
+
+  int __stdcall hk_wmic_helper(int a1, int a2, wchar_t* a3, void* Src, wchar_t* String, void* a6)
+  {
+    std::cout << "[wmic helper]" << std::endl;
+    return (reinterpret_cast<wmic_helper_t>(wmic_helper_addr))(a1, a2, a3, Src, String, a6);
+  }
+
   // helper to check when we enable defender 
-  // address: 0046AB70
-  // base: 400000
-  // rel: base+6AB70
-  // we can try a thiscall variant or cdecltype
-  // https://www.unknowncheats.me/forum/849605-post6.html
-  // int __thiscall enable_def_helper(int *this, int a2, _DWORD *a3)
+  // address: 6AB70
+  // calling convention: https://www.unknowncheats.me/forum/849605-post6.html
   // pattern: 55 8B EC 83 E4 F8 83 EC 64 53 56 8B 75 08 8B 46 08 8B D9 57 8D 4C 24 50 89 44 24 20 C7 44 24
   //
   using enable_def_helper_t = int(__thiscall*)(void*, int, DWORD*);
@@ -343,15 +367,17 @@ void thread_main()
 
   // reg hooks
   //
-  //DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
-  //DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
-  //DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
+#if 0
+  DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regsetvalue_addr, RegHooks::hk_RegSetValueExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegCreateKeyExW_addr, RegHooks::hk_RegCreateKeyExW);
-  //DetourHelper::perf_hook((PVOID*)&RegHooks::RegConnectRegistryW_addr, RegHooks::hk_RegConnectRegistryW);
-  //DetourHelper::perf_hook((PVOID*)&RegHooks::RegEnumKeyExW_addr, RegHooks::hk_RegEnumKeyExW);
-  //DetourHelper::perf_hook((PVOID*)&RegHooks::RegQueryValueExW_addr, RegHooks::hk_RegQueryValueExW);
-  //DetourHelper::perf_hook((PVOID*)&RegHooks::RegOpenKeyExW_addr, RegHooks::hk_RegOpenKeyExW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegConnectRegistryW_addr, RegHooks::hk_RegConnectRegistryW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegEnumKeyExW_addr, RegHooks::hk_RegEnumKeyExW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegQueryValueExW_addr, RegHooks::hk_RegQueryValueExW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::RegOpenKeyExW_addr, RegHooks::hk_RegOpenKeyExW);
+#endif
 
   // native hooks
   // 
@@ -360,6 +386,9 @@ void thread_main()
 
   RegHooks::disable_def_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AEAF;
   DetourHelper::perf_hook((PVOID*)&RegHooks::disable_def_addr, RegHooks::hk_disable_def);
+
+  RegHooks::wmic_helper_addr = (uintptr_t)GetModuleHandleA(0) + 0x7A999;
+  DetourHelper::perf_hook((PVOID*)&RegHooks::wmic_helper_addr, RegHooks::hk_wmic_helper);
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
