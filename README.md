@@ -366,7 +366,11 @@ Luckily for us, all this stuff is documented. Check out these two links:
 - https://docs.microsoft.com/en-us/windows/win32/wmisdk/wmi-c---application-examples
 
 So, since its kind of difficult to debug the values DefenderControl accesses and this stuff is pretty well documented - we are going to base our work off research.
-There is a nice website that documents stuff like this here: https://privacy.sexy/  
 
+I first wanted to see how powershell called the command, so i looked through the powershell github since its open sourced and found that the command was in a cmdlet that was not documented in the repository. So after reading up on some powershell commands I dumped the powershell informating using this:
+
+```
+Get-Command Set-MpPreference | fl
+```
 
   
