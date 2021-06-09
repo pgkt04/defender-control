@@ -375,10 +375,12 @@ Get-Command Set-MpPreference | fl
 
 If we wanted to read the MSFT_MpPreference class, it is documented here:
 https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/dn455323(v=vs.85)#requirements
-We can access via powershell like so:
+We can access via powershell like so:  
 ```
 Get-WmiObject -ClassName MSFT_MpPreference -Namespace root/microsoft/windows/defender
 ```
+If we look further we can write to this using the WMI as i suspected, it is documented here:
+https://docs.microsoft.com/en-us/previous-versions/windows/desktop/defender/windows-defender-wmiv2-apis-portal  
 
 
   
