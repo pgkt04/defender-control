@@ -402,15 +402,3 @@ We can find the class here: https://docs.microsoft.com/en-us/dotnet/api/microsof
 It is also located in windows binaries in the following path: C:\Program Files (x86)\Reference Assemblies\Microsoft\WMI\v1.0 
 
 
-
-
-
-
-
-
-
-
-
-
-
-  
