@@ -371,7 +371,7 @@ I first wanted to see how powershell called the command, so i looked through the
 
 ```
 Get-Command Set-MpPreference | fl
-```
+e``
 
 If we wanted to read the MSFT_MpPreference class, it is documented here:
 https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/dn455323(v=vs.85)#requirements  
@@ -381,6 +381,36 @@ Get-WmiObject -ClassName MSFT_MpPreference -Namespace root/microsoft/windows/def
 ```
 If we look further we can write to this using the WMI as i suspected, it is documented here:
 https://docs.microsoft.com/en-us/previous-versions/windows/desktop/defender/windows-defender-wmiv2-apis-portal  
+
+We can find the specific wmi com classes if we do the following command:
+  
+```
+MpPreference |fl *
+```
+
+We get an output and we are intrested in this:
+```
+CimClass                                      : root/Microsoft/Windows/Defender:MSFT_MpPreference
+CimInstanceProperties                         : {AllowDatagramProcessingOnWinServer, AllowNetworkProtectionDownLevel,
+                                                AllowNetworkProtectionOnWinServer,
+                                                AttackSurfaceReductionOnlyExclusions...}
+CimSystemProperties                           : Microsoft.Management.Infrastructure.CimSystemProperties
+```
+
+We can find the class here: https://docs.microsoft.com/en-us/dotnet/api/microsoft.management.infrastructure.cimsystemproperties?view=powershellsdk-7.0.0
+
+It is also located in windows binaries in the following path: C:\Program Files (x86)\Reference Assemblies\Microsoft\WMI\v1.0 
+
+
+
+
+
+
+
+
+
+
+
 
 
   
