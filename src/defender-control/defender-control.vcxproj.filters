@@ -16,6 +16,9 @@
     <Filter Include="Source Files\defender-control">
       <UniqueIdentifier>{8a88e18b-d3f3-447e-a3b0-9867c153c3c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\defender-control\wmic">
+      <UniqueIdentifier>{db30358b-f563-460e-92fb-eacafe3a68cb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -24,10 +27,16 @@
     <ClCompile Include="dcontrol.cpp">
       <Filter>Source Files\defender-control</Filter>
     </ClCompile>
+    <ClCompile Include="wmic.cpp">
+      <Filter>Source Files\defender-control\wmic</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dcontrol.h">
+    <ClInclude Include="dcontrol.hpp">
       <Filter>Source Files\defender-control</Filter>
+    </ClInclude>
+    <ClInclude Include="wmic.hpp">
+      <Filter>Source Files\defender-control\wmic</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

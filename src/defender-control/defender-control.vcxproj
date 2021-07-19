@@ -143,9 +143,11 @@
   <ItemGroup>
     <ClCompile Include="dcontrol.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="wmic.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="dcontrol.h" />
+    <ClInclude Include="dcontrol.hpp" />
+    <ClInclude Include="wmic.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

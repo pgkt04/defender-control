@@ -1,4 +1,5 @@
-#include "dcontrol.h"
+#include "dcontrol.hpp"
+#include "wmic.hpp"
 
 // to-do:
 // write argument parser
@@ -13,9 +14,7 @@ int main()
     "Windows defender is ACTIVE\n" :
     "Windows defender is OFF\n");
 
-  printf(DCONTROL::disable_defender() ?
-    "Defender disabled\n" :
-    "Failed to disable\n");
+
 
   system("pause");
 
