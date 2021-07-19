@@ -187,7 +187,93 @@ namespace wmic
 
   helper::helper(std::string wnamespace, std::string wclass)
   {
-    hres = {};
+    // Initialize 
+    //
+    last_error = 0;
+    hres = 0;
+    loc_ptr = nullptr;
+    service_ptr = nullptr;
+
+    // Setup COM library
+    //
+    hres = CoInitializeEx(0, COINIT_MULTITHREADED);
+
+    if (FAILED(hres))
+    {
+      last_error = 1;
+      return;
+    }
+
+    // Setup general security levels
+    //
+    hres = CoInitializeSecurity(
+      NULL,
+      -1,                          // COM authentication
+      NULL,                        // Authentication services
+      NULL,                        // Reserved
+      RPC_C_AUTHN_LEVEL_DEFAULT,   // Default authentication 
+      RPC_C_IMP_LEVEL_IMPERSONATE, // Default Impersonation  
+      NULL,                        // Authentication info
+      EOAC_NONE,                   // Additional capabilities 
+      NULL                         // Reserved
+    );
+
+    if (FAILED(hres))
+    {
+      last_error = 2;
+      CoUninitialize();
+      return;
+    }
+
+    // Obtain locator for wmi
+    //
+
+    hres = CoCreateInstance(CLSID_WbemLocator, 0,
+      CLSCTX_INPROC_SERVER,
+      IID_IWbemLocator, (LPVOID*)&loc_ptr);
+
+    if (FAILED(hres))
+    {
+      last_error = 3;
+      CoUninitialize();
+      return;
+    }
+
+    // Connect to wmi with IbwemLocator::ConnectServer
+    //
+    hres = loc_ptr->ConnectServer(
+      _bstr_t(wnamespace.c_str()),
+      0, 0, 0, 0, 0, 0, &service_ptr
+    );
+
+    if (FAILED(hres))
+    {
+      last_error = 4;
+      loc_ptr->Release();
+      CoUninitialize();
+      return;
+    }
+
+    // Set security levels for the proxy 
+    //
+    hres = CoSetProxyBlanket(
+      service_ptr,                 // Indicates the proxy to set
+      RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx 
+      RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx 
+      NULL,                        // Server principal name 
+      RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx 
+      RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
+      NULL,                        // client identity
+      EOAC_NONE                    // proxy capabilities 
+    );
+
+    if (FAILED(hres))
+    {
+      service_ptr->Release();
+      loc_ptr->Release();
+      CoUninitialize();
+      return;
+    }
   }
 
   helper::~helper()

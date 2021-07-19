@@ -15,11 +15,15 @@ namespace wmic
 
   class helper
   {
+    int last_error;
     HRESULT hres;
+    IWbemServices* service_ptr;
+    IWbemLocator* loc_ptr;
+
 
   public:
-    wmic_helper(std::string wnamespace, std::string wclass);
-    ~wmic_helper();
+    helper(std::string wnamespace, std::string wclass);
+    ~helper();
   };
 }
 
