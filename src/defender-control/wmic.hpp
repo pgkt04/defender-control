@@ -11,5 +11,5 @@ namespace wmic
 {
   // function to test getting data
   //
-  void test_get();
+  bool test_get();
 }

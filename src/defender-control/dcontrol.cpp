@@ -1,4 +1,4 @@
-#include "dcontrol.h"
+#include "dcontrol.hpp"
 
 namespace REG
 {

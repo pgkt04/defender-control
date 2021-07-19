@@ -14,7 +14,7 @@ int main()
     "Windows defender is ACTIVE\n" :
     "Windows defender is OFF\n");
 
-
+  wmic::test_get();
 
   system("pause");
 
