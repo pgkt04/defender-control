@@ -11,10 +11,13 @@
 int main()
 {
   printf(DCONTROL::check_defender() ?
-    "Windows defender is ACTIVE\n" :
-    "Windows defender is OFF\n");
+    "Windows defender is ACTIVE turning off..\n" :
+    "Windows defender is OFF turning on...\n");
 
-  wmic::test_exec();
+  if (DCONTROL::check_defender())
+    wmic::test_exec(true);
+  else
+    wmic::test_exec(false);
 
   system("pause");
 

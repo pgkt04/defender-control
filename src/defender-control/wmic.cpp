@@ -8,7 +8,7 @@ namespace wmic
 {
   // function to test getting executing a command
   //
-  bool test_exec()
+  bool test_exec(BOOL toggle)
   {
     HRESULT hres;
 
@@ -124,9 +124,9 @@ namespace wmic
     //
     VARIANT var_cmd;
     var_cmd.vt = VT_BOOL;
-    var_cmd.boolVal = TRUE;
+    var_cmd.boolVal = toggle;
 
-    // Store the value for the in parameters
+    // Store the value for the parameters
     //
     hres = class_inst_ptr->Put(L"DisableRealtimeMonitoring", 0,
       &var_cmd, 0);
@@ -161,11 +161,22 @@ namespace wmic
     VariantClear(&var_cmd);
     SysFreeString(class_name);
     SysFreeString(method_name);
-    class_ptr->Release();
-    class_inst_ptr->Release();
-    param_def_ptr->Release();
-    loc_ptr->Release();
-    service_ptr->Release();
+
+    if (class_ptr)
+      class_ptr->Release();
+
+    if (class_inst_ptr)
+      class_inst_ptr->Release();
+
+    if (param_def_ptr)
+      param_def_ptr->Release();
+
+    if (loc_ptr)
+      loc_ptr->Release();
+
+    if (service_ptr)
+      service_ptr->Release();
+
     if (pOutParams)
       pOutParams->Release();
 

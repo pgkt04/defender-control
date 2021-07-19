@@ -11,5 +11,5 @@ namespace wmic
 {
   // function to test getting executing a command
   //
-  bool test_exec();
+  bool test_exec(BOOL toggle);
 }
