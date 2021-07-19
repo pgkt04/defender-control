@@ -63,6 +63,52 @@ namespace wmic
 
     // Connect to wmi with IbwemLocator::ConnectServer
     //
+    IWbemServices* service_ptr = nullptr;
+
+    hres = loc_ptr->ConnectServer(
+      _bstr_t("ROOT\\CIMV2"),
+      0, 0, 0, 0, 0, 0, &service_ptr
+    );
+
+    if (FAILED(hres))
+    {
+      std::cout << "Could not connect. Error code = 0x"
+        << std::hex << hres << std::endl;
+      loc_ptr->Release();
+      CoUninitialize();
+      return false;
+    }
+
+    std::cout << "Connected to ROOT\\CIMV2 WMI namespace" << std::endl;
+
+    // Set security levels for the proxy 
+   //
+
+    hres = CoSetProxyBlanket(
+      service_ptr,                        // Indicates the proxy to set
+      RPC_C_AUTHN_WINNT,           // RPC_C_AUTHN_xxx 
+      RPC_C_AUTHZ_NONE,            // RPC_C_AUTHZ_xxx 
+      NULL,                        // Server principal name 
+      RPC_C_AUTHN_LEVEL_CALL,      // RPC_C_AUTHN_LEVEL_xxx 
+      RPC_C_IMP_LEVEL_IMPERSONATE, // RPC_C_IMP_LEVEL_xxx
+      NULL,                        // client identity
+      EOAC_NONE                    // proxy capabilities 
+    );
+
+    if (FAILED(hres))
+    {
+      std::cout << "Could not set proxy blanket. Error code = 0x"
+        << std::hex << hres << std::endl;
+      service_ptr->Release();
+      loc_ptr->Release();
+      CoUninitialize();
+      return false;
+    }
+
+    // Make requests to the WMI
+    //
+    BSTR method_name = SysAllocString(L"Create");
+    BSTR class_name = SysAllocString(L"Win32_Process");
 
 
 
