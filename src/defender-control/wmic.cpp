@@ -6,7 +6,7 @@ namespace wmic
 {
   // function to test getting data
   //
-  bool test_get()
+  bool test_exec()
   {
     HRESULT hres;
 
