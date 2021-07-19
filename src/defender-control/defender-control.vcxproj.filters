@@ -16,11 +16,14 @@
     <Filter Include="Source Files\defender-control">
       <UniqueIdentifier>{8a88e18b-d3f3-447e-a3b0-9867c153c3c1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\defender-control\wmic">
-      <UniqueIdentifier>{db30358b-f563-460e-92fb-eacafe3a68cb}</UniqueIdentifier>
+    <Filter Include="Source Files\reg">
+      <UniqueIdentifier>{1d1c7c6d-6f90-49ce-a823-f7deee4d955d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\defender-control\util">
+    <Filter Include="Source Files\util">
       <UniqueIdentifier>{0cabcba0-6285-4ad6-9295-add0563d0d48}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\wmic">
+      <UniqueIdentifier>{db30358b-f563-460e-92fb-eacafe3a68cb}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -31,10 +34,13 @@
       <Filter>Source Files\defender-control</Filter>
     </ClCompile>
     <ClCompile Include="wmic.cpp">
-      <Filter>Source Files\defender-control\wmic</Filter>
+      <Filter>Source Files\wmic</Filter>
     </ClCompile>
     <ClCompile Include="util.cpp">
-      <Filter>Source Files\defender-control\util</Filter>
+      <Filter>Source Files\util</Filter>
+    </ClCompile>
+    <ClCompile Include="reg.cpp">
+      <Filter>Source Files\reg</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -42,10 +48,16 @@
       <Filter>Source Files\defender-control</Filter>
     </ClInclude>
     <ClInclude Include="wmic.hpp">
-      <Filter>Source Files\defender-control\wmic</Filter>
+      <Filter>Source Files\wmic</Filter>
     </ClInclude>
     <ClInclude Include="util.hpp">
-      <Filter>Source Files\defender-control\util</Filter>
+      <Filter>Source Files\util</Filter>
+    </ClInclude>
+    <ClInclude Include="reg.hpp">
+      <Filter>Source Files\reg</Filter>
+    </ClInclude>
+    <ClInclude Include="settings.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
