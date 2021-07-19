@@ -89,8 +89,9 @@ It seems to call RegDeleteValueW on security health (see above)
 ## reversing w hooks
 We are going to write a simple dll to inject into defender control to dump out the parameters of the functions we are interested in.  
 
-Here are the logs:
-```
+Here are the logs:  
+
+```asm
 obtained RegDeleteKeyW from 75A60000
 obtained RegDeleteValueW from 75A60000
 obtained RegEnumValueW from 75A60000
@@ -266,14 +267,16 @@ lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
 <also redacted a bunch of stuff from policy manager stuff>
 ```
   
-So by analyzing these logs, it seems that we check if defender is enabled by reading these two registries:
-```
+So by analyzing these logs, it seems that we check if defender is enabled by reading these two registries:  
+
+```asm
 SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
 DisableRealtimeMonitoring
 ```
   
-When it disables the AV it modifies these registries:
-```
+When it disables the AV it modifies these registries:  
+
+```asm
 [RegCreateKeyExW]
 lpSubKey: SOFTWARE\Policies\Microsoft\Windows Defender
 [RegSetValueExW]
@@ -305,7 +308,7 @@ lpValueName: DisableRealtimeMonitoring
 ```
 
 ### Dumping VTable Calls
-```
+```asm
 [Control Table] 0x495b78
 [Control Table] 0x493658
 [Control Table] 0x4932f8
@@ -369,7 +372,7 @@ So, since its kind of difficult to debug the values DefenderControl accesses and
 
 I first wanted to see how powershell called the command, so i looked through the powershell github since its open sourced and found that the command was in a cmdlet that was not documented in the repository. So after reading up on some powershell commands I dumped the powershell informating using this:
 
-```
+```asm
 Get-Command Set-MpPreference | fl
 ```
 
@@ -377,7 +380,7 @@ If we wanted to read the MSFT_MpPreference class, it is documented here:
 https://docs.microsoft.com/en-us/previous-versions/windows/desktop/legacy/dn455323(v=vs.85)#requirements  
 We can access via powershell like so:  
 
-```
+```asm
 Get-WmiObject -ClassName MSFT_MpPreference -Namespace root/microsoft/windows/defender
 ```
 
