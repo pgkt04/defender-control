@@ -384,12 +384,11 @@ https://docs.microsoft.com/en-us/previous-versions/windows/desktop/defender/wind
 
 We can find the specific wmi com classes if we do the following command:
   
-```
-MpPreference |fl *
-```
+`MpPreference |fl *`
 
 We get an output and we are intrested in this:
-```
+
+```asm
 CimClass                                      : root/Microsoft/Windows/Defender:MSFT_MpPreference
 CimInstanceProperties                         : {AllowDatagramProcessingOnWinServer, AllowNetworkProtectionDownLevel,
                                                 AllowNetworkProtectionOnWinServer,

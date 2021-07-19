@@ -430,6 +430,15 @@ namespace RegHooks
       lpStartupInfo, lpProcessInformation);
   }
 
+  // ShellExecuteEx
+  //
+  using ShellExecuteExW_t = BOOL(__stdcall*)(SHELLEXECUTEINFOW*);
+  uintptr_t ShellExecuteExW_addr;
+  BOOL __stdcall hk_ShellExecuteExW(SHELLEXECUTEINFOW* pExecInfo)
+  {
+    std::cout << "[ShellExecuteExW]" << std::endl;
+    return (reinterpret_cast<ShellExecuteExW_t>(ShellExecuteExW_addr))(pExecInfo);
+  }
 }
 
 namespace DetourHelper
@@ -476,6 +485,7 @@ void thread_main()
   //
   auto advapi32 = GetModuleHandleA("Advapi32.dll");
   auto kernel32 = GetModuleHandleA("Kernel32.dll");
+  auto shell32 = GetModuleHandleA("shell32.dll");
 
   if (!advapi32)
   {
@@ -499,7 +509,7 @@ void thread_main()
   RegHooks::RegQueryValueExW_addr = get_func_addr(advapi32, "RegQueryValueExW");
   RegHooks::RegOpenKeyExW_addr = get_func_addr(advapi32, "RegOpenKeyExW");
   RegHooks::CreateProcessW_addr = get_func_addr(kernel32, "CreateProcessW");
-
+  RegHooks::ShellExecuteExW_addr = get_func_addr(shell32, "ShellExecuteExW");
 
   std::cout << "imports resolved\npreparing to hook" << std::endl;
 
@@ -515,10 +525,10 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegEnumKeyExW_addr, RegHooks::hk_RegEnumKeyExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegQueryValueExW_addr, RegHooks::hk_RegQueryValueExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegOpenKeyExW_addr, RegHooks::hk_RegOpenKeyExW);
+  DetourHelper::perf_hook((PVOID*)&RegHooks::CreateProcessW_addr, RegHooks::hk_CreateProcessW);
 #endif
 
-  DetourHelper::perf_hook((PVOID*)&RegHooks::CreateProcessW_addr, RegHooks::hk_CreateProcessW);
-
+  DetourHelper::perf_hook((PVOID*)&RegHooks::ShellExecuteExW_addr, RegHooks::hk_ShellExecuteExW);
 
   // native hooks
   // 
@@ -540,7 +550,6 @@ void thread_main()
 
   RegHooks::ControlTable_addr = (uintptr_t)GetModuleHandleA(0) + 0x45E0;
   DetourHelper::perf_hook((PVOID*)&RegHooks::ControlTable_addr, RegHooks::hk_ControlTable);
-#endif
 
   RegHooks::alt_start_proc_addr = (uintptr_t)GetModuleHandleA(0) + 0x464DC;
   DetourHelper::perf_hook((PVOID*)&RegHooks::alt_start_proc_addr, RegHooks::hk_alt_start_proc);
@@ -551,10 +560,9 @@ void thread_main()
   RegHooks::StartProcWrapper_addr = (uintptr_t)GetModuleHandleA(0) + 0x33FA4;
   DetourHelper::perf_hook((PVOID*)&RegHooks::StartProcWrapper_addr, RegHooks::hk_StartProcWrapper);
 
-
   RegHooks::execute_shell_stuff_addr = (uintptr_t)GetModuleHandleA(0) + 0x33FA4;
   DetourHelper::perf_hook((PVOID*)&RegHooks::execute_shell_stuff_addr, RegHooks::hk_execute_shell_stuff);
-   
+#endif
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
