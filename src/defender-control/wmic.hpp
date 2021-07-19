@@ -7,23 +7,94 @@
 #include <Wbemidl.h>
 #pragma comment(lib, "wbemuuid.lib")
 
+#include "util.hpp"
+
 namespace wmic
 {
-  // function to test getting executing a command
-  //
-  bool test_exec(BOOL toggle);
+  enum class variant_type : int
+  {
+    t_bool,
+    t_bstr,
+    t_uint8,
+    t_uint32
+  };
 
   class helper
   {
     int last_error;
     HRESULT hres;
+
     IWbemServices* service_ptr;
     IWbemLocator* loc_ptr;
 
+    IWbemClassObject* class_ptr;
+    IWbemClassObject* param_def_ptr;
+    IWbemClassObject* class_inst_ptr;
+
+    BSTR method_name;
+    BSTR class_name;
 
   public:
-    helper(std::string wnamespace, std::string wclass);
+
+    helper(std::string wnamespace, std::string wclass, std::string wmethod);
     ~helper();
+
+    // Return the last error
+    //
+    int get_last_error();
+
+    // Execute WMI set function
+    //
+    template<typename T>
+    void execute_cmd(std::string variable, variant_type type, T value)
+    {
+      // Create values for in parameter
+      //
+      VARIANT var_cmd;
+
+      switch (type)
+      {
+      case variant_type::t_bstr:
+        var_cmd.vt = VT_BSTR;
+        var_cmd.bstrVal = _bstr_t(value);
+        break;
+
+      case variant_type::t_bool:
+        var_cmd.vt = VT_BOOL;
+        var_cmd.boolVal = value;
+        break;
+
+      case variant_type::t_uint8:
+        var_cmd.vt = VT_UI1;
+        var_cmd.uintVal = value;
+        break;
+
+      case variant_type::t_uint32:
+        var_cmd.vt = VT_UI4;
+        var_cmd.uintVal = value;
+
+      default:
+        last_error = 6;
+        return;
+      }
+
+      // Store the value for the parameters
+      //
+      hres = class_inst_ptr->Put(util::string_to_wide(variable).c_str(), 0, &var_cmd, 0);
+
+      // Execute 
+      //
+      IWbemClassObject* pOutParams = nullptr;
+      hres = service_ptr->ExecMethod(class_name, method_name, 0,
+        0, class_inst_ptr, &pOutParams, 0);
+
+      // Cleanup
+      //
+      VariantClear(&var_cmd);
+
+      if (pOutParams)
+        pOutParams->Release();
+    }
   };
 }
 
