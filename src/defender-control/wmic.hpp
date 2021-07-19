@@ -12,4 +12,14 @@ namespace wmic
   // function to test getting executing a command
   //
   bool test_exec(BOOL toggle);
+
+  class helper
+  {
+    HRESULT hres;
+
+  public:
+    wmic_helper(std::string wnamespace, std::string wclass);
+    ~wmic_helper();
+  };
 }
+

@@ -184,4 +184,13 @@ namespace wmic
 
     return true;
   }
+
+  helper::helper(std::string wnamespace, std::string wclass)
+  {
+    hres = {};
+  }
+
+  helper::~helper()
+  {
+  }
 }
