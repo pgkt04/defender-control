@@ -4,7 +4,7 @@
 
 namespace wmic
 {
-  // function to test getting data
+  // function to test getting executing a command
   //
   bool test_exec()
   {
