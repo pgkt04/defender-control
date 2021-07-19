@@ -1,5 +1,7 @@
 // WMIC controls for windows defender module (cmdlet)
-//
+// mppreference: https://docs.microsoft.com/en-us/previous-versions/windows/desktop/defender/msft-mppreference
+// wmi: https://docs.microsoft.com/en-us/windows/win32/wmisdk/example--getting-wmi-data-from-the-local-computer
+// 
 #include "wmic.hpp"
 
 namespace wmic
@@ -66,7 +68,7 @@ namespace wmic
     IWbemServices* service_ptr = nullptr;
 
     hres = loc_ptr->ConnectServer(
-      _bstr_t("ROOT\\CIMV2"),
+      _bstr_t("root\\Microsoft\\Windows\\Defender"),
       0, 0, 0, 0, 0, 0, &service_ptr
     );
 
@@ -79,7 +81,7 @@ namespace wmic
       return false;
     }
 
-    std::cout << "Connected to ROOT\\CIMV2 WMI namespace" << std::endl;
+    std::cout << "Connected to root/Microsoft/Windows/Defender namespace" << std::endl;
 
     // Set security levels for the proxy 
     //
@@ -106,8 +108,8 @@ namespace wmic
 
     // Make requests to the WMI
     //
-    BSTR method_name = SysAllocString(L"Create");
-    BSTR class_name = SysAllocString(L"Win32_Process");
+    BSTR method_name = SysAllocString(L"Set");
+    BSTR class_name = SysAllocString(L"MSFT_MpPreference");
 
     IWbemClassObject* class_ptr = nullptr;
     hres = service_ptr->GetObjectA(class_name, 0, 0, &class_ptr, 0);
@@ -121,20 +123,21 @@ namespace wmic
     // Create values for in parameter
     //
     VARIANT var_cmd;
-    var_cmd.vt = VT_BSTR;
-    var_cmd.bstrVal = _bstr_t("notepad.exe");
+    var_cmd.vt = VT_BOOL;
+    var_cmd.boolVal = TRUE;
 
     // Store the value for the in parameters
     //
-    hres = class_inst_ptr->Put(L"CommandLine", 0,
+    hres = class_inst_ptr->Put(L"DisableRealtimeMonitoring", 0,
       &var_cmd, 0);
-    wprintf(L"The command is: %s\n", V_BSTR(&var_cmd));
+
+    std::cout << "executing DisableRealtimeMonitoring" << std::endl;
 
     // Execute 
     //
-    IWbemClassObject* pOutParams = NULL;
+    IWbemClassObject* pOutParams = nullptr;
     hres = service_ptr->ExecMethod(class_name, method_name, 0,
-      NULL, class_inst_ptr, &pOutParams, NULL);
+      0, class_inst_ptr, &pOutParams, 0);
 
     if (FAILED(hres))
     {
@@ -153,26 +156,19 @@ namespace wmic
       return false;
     }
 
-    // To see what the method returned - use the following code.  
-    // The return value will be in &varReturnValue
-    //
-    VARIANT varReturnValue;
-    hres = pOutParams->Get(_bstr_t(L"ReturnValue"), 0,
-      &varReturnValue, NULL, 0);
-
-
     // Clean up
     //
     VariantClear(&var_cmd);
-    VariantClear(&varReturnValue);
     SysFreeString(class_name);
     SysFreeString(method_name);
     class_ptr->Release();
     class_inst_ptr->Release();
     param_def_ptr->Release();
-    pOutParams->Release();
     loc_ptr->Release();
     service_ptr->Release();
+    if (pOutParams)
+      pOutParams->Release();
+
     CoUninitialize();
 
     return true;
