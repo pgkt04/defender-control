@@ -9,10 +9,15 @@
 
 int main()
 {
-  if (!strstr(util::get_user().c_str(), "SYSTEM"))
+  if (!trusted::is_system_group())
   {
-    // get current process directory
+    // Because we are a primary token, we can't swap ourselves with an impersonation token
+    // There will always be a need to re-create the process with the token as primary.
+    // 
+    auto path = util::get_current_path();
+    std::cout << path << std::endl;
 
+    system("pause");
     return 1;
   }
 

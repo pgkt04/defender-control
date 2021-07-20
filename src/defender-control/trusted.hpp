@@ -2,6 +2,8 @@
 #include <Windows.h>
 #include <string>
 #include <TlHelp32.h>
+#include <sddl.h>
+#include <iostream>
 
 namespace trusted
 {
@@ -10,4 +12,8 @@ namespace trusted
   bool impersonate_system();
   bool impersonate_trusted(DWORD pid);
   DWORD start_trusted();
+
+  // Check current permissions
+  //
+  bool is_system_group();
 }
