@@ -326,9 +326,11 @@ lpValueName: DisableRealtimeMonitoring
 
 Upon starting the AV, the program calls CreateProcessW on C:\Windows\System32\SecurityHealthSystray.exe
 
-## Windows Tamper Protection
+## Windows File Protection
 
-But theres, a catch. In a newer recent windows update - you can no longer disable the defender via registries. Well, our program runs completely in usermode, so there must be another way its making these registry changes - most likely through the powershell command  Set-MpPreference if we do some research into changing the registry. So we will need to take a peek into the wmic api it accesses.  
+But theres, a catch. In a newer recent windows update - you can no longer disable the defender via registries without elevated permissions.  
+Well, our program runs completely in usermode, so there must be another way its making these registry changes - most likely through the powershell command  Set-MpPreference if we do some research into changing the registry. So we will need to take a peek into the wmic api it accesses. 
+
 Luckily for us, all this stuff is documented. Check out these two links:  
 - https://docs.microsoft.com/en-us/powershell/module/defender/set-mppreference?view=windowsserver2019-ps
 - https://docs.microsoft.com/en-us/windows/win32/wmisdk/wmi-c---application-examples
@@ -367,3 +369,5 @@ CimSystemProperties                           : Microsoft.Management.Infrastruct
 We can find the class here: https://docs.microsoft.com/en-us/dotnet/api/microsoft.management.infrastructure.cimsystemproperties?view=powershellsdk-7.0.0
 
 It is also located in windows binaries in the following path: C:\Program Files (x86)\Reference Assemblies\Microsoft\WMI\v1.0 
+
+
