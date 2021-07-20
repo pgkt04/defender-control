@@ -9,6 +9,11 @@ But I like open source, so I made a safe to use open source defender control.
 ## Demo
 ![Demo](https://github.com/qtkite/defender-control/blob/main/resources/demo.gif?raw=true)
 
+## TODO
+- Delete windefend as trusted installer
+- Remove startup as boot
+
+
 ## Reversal
 I reversed parts of the freeware with some hooks & x64 debugger, here are some of my findings
 
