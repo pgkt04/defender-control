@@ -259,7 +259,7 @@ namespace trusted
 
   }
 
-  // Check current permissions
+  // Check current permissions for SYSTEM
   //
   bool is_system_group()
   {
@@ -298,6 +298,28 @@ namespace trusted
       GlobalFree(Ptoken_User);
 
     return false;
+  }
+
+  // Checks if the current process is elevated
+  //
+  bool has_admin()
+  {
+    BOOL ret = FALSE;
+    HANDLE token = NULL;
+
+    if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token)) 
+    {
+      TOKEN_ELEVATION elevation;
+      DWORD rlen = sizeof(TOKEN_ELEVATION);
+
+      if (GetTokenInformation(token, TokenElevation, &elevation, sizeof(elevation), &rlen)) 
+        ret = elevation.TokenIsElevated;
+    }
+
+    if (token) 
+      CloseHandle(token);
+
+    return ret;
   }
 
 }

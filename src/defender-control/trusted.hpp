@@ -13,7 +13,11 @@ namespace trusted
   bool impersonate_trusted(DWORD pid);
   DWORD start_trusted();
 
-  // Check current permissions
+  // Check current permissions for SYSTEM
   //
   bool is_system_group();
+
+  // Checks if the current process is elevated
+  //
+  bool has_admin();
 }
