@@ -84,4 +84,14 @@ namespace util
     }
     return v0;
   }
+
+  // Get current username
+  //
+  std::string get_user()
+  {
+    char username[UNLEN + 1];
+    DWORD username_len = UNLEN + 1;
+    GetUserNameA(username, &username_len);
+    return std::string(username);
+  }
 }

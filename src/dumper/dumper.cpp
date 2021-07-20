@@ -515,7 +515,6 @@ void thread_main()
 
   // reg hooks
   //
-#if 0
   DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletekeyw_addr, RegHooks::hk_RegDeleteKeyW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regdeletevaluew_addr, RegHooks::hk_RegDeleteValueW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::regenumvaluew_addr, RegHooks::hk_RegEnumValueW);
@@ -526,13 +525,10 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegQueryValueExW_addr, RegHooks::hk_RegQueryValueExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::RegOpenKeyExW_addr, RegHooks::hk_RegOpenKeyExW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::CreateProcessW_addr, RegHooks::hk_CreateProcessW);
-#endif
-
   DetourHelper::perf_hook((PVOID*)&RegHooks::ShellExecuteExW_addr, RegHooks::hk_ShellExecuteExW);
 
   // native hooks
   // 
-#if 0
   RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
   DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::hk_enable_def);
 
@@ -562,7 +558,6 @@ void thread_main()
 
   RegHooks::execute_shell_stuff_addr = (uintptr_t)GetModuleHandleA(0) + 0x33FA4;
   DetourHelper::perf_hook((PVOID*)&RegHooks::execute_shell_stuff_addr, RegHooks::hk_execute_shell_stuff);
-#endif
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,

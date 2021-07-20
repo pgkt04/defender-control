@@ -1,6 +1,7 @@
 #pragma once
 #include <Windows.h>
 #include <string>
+#include <lmcons.h>
 
 namespace util
 {
@@ -15,6 +16,9 @@ namespace util
   // Sets the programs debug priviliges
   //
   bool set_privilege(LPCSTR privilege, BOOL enable);
-
   char sub_43604B();
+
+  // Get current username
+  //
+  std::string get_user();
 }

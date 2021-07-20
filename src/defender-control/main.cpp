@@ -5,9 +5,17 @@
 //
 #include "dcontrol.hpp"
 #include "wmic.hpp"
+#include "trusted.hpp"
 
 int main()
 {
+  if (!strstr(util::get_user().c_str(), "SYSTEM"))
+  {
+    std::cout << "Insufficient permissions" << std::endl;
+    system("pause");
+    return 1;
+  }
+
   printf(dcontrol::check_defender() ?
     "Windows defender is ACTIVE\n" :
     "Windows defender is OFF\n");

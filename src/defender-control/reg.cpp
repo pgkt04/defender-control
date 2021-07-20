@@ -83,10 +83,7 @@ namespace REG
       reinterpret_cast<LPBYTE>(&value), 4);
 
     if (ret)
-    {
-      std::cout << "Set error: " << ret << std::endl;
       return false;
-    }
 
     return true;
   }
