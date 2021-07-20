@@ -43,10 +43,42 @@ namespace wmic
     //
     int get_last_error();
 
+
+    void execute(std::string variable, std::string value)
+    {
+      VARIANT var_cmd;
+      var_cmd.vt = VT_BSTR;
+      var_cmd.bstrVal = _bstr_t(util::string_to_wide(value).c_str());
+
+      // Store the value for the parameters
+      //
+      hres = class_inst_ptr->Put(util::string_to_wide(variable).c_str(), 0, &var_cmd, 0);
+
+      // Execute 
+      //
+      IWbemClassObject* pOutParams = nullptr;
+      hres = service_ptr->ExecMethod(class_name, method_name, 0,
+        0, class_inst_ptr, &pOutParams, 0);
+
+      if (FAILED(hres))
+      {
+        last_error = 7;
+        std::cout << "error executing" << std::endl;
+      }
+
+      // Cleanup
+      //
+      VariantClear(&var_cmd);
+
+      if (pOutParams)
+        pOutParams->Release();
+    }
+
+
     // Execute WMI set function
     //
     template<typename T>
-    void execute_cmd(std::string variable, variant_type type, T value)
+    void execute(std::string variable, variant_type type, T value)
     {
       // Create values for in parameter
       //
@@ -54,11 +86,6 @@ namespace wmic
 
       switch (type)
       {
-      case variant_type::t_bstr:
-        var_cmd.vt = VT_BSTR;
-        var_cmd.bstrVal = _bstr_t(value);
-        break;
-
       case variant_type::t_bool:
         var_cmd.vt = VT_BOOL;
         var_cmd.boolVal = value;
@@ -87,6 +114,12 @@ namespace wmic
       IWbemClassObject* pOutParams = nullptr;
       hres = service_ptr->ExecMethod(class_name, method_name, 0,
         0, class_inst_ptr, &pOutParams, 0);
+
+      if (FAILED(hres))
+      {
+        last_error = 7;
+        std::cout << "error executing" << std::endl;
+      }
 
       // Cleanup
       //

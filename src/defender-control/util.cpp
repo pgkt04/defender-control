@@ -27,7 +27,7 @@ namespace util
     HANDLE token = nullptr;
     LUID luid = { 0,0 };
 
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token)) 
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &token))
     {
       if (token)
         CloseHandle(token);
@@ -35,7 +35,7 @@ namespace util
       return false;
     }
 
-    if (!LookupPrivilegeValueA(nullptr, SE_DEBUG_NAME, &luid)) 
+    if (!LookupPrivilegeValueA(nullptr, SE_DEBUG_NAME, &luid))
     {
       if (token)
         CloseHandle(token);

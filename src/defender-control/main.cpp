@@ -8,27 +8,20 @@
 
 int main()
 {
-  printf(DCONTROL::check_defender() ?
-    "Windows defender is ACTIVE turning off..\n" :
-    "Windows defender is OFF turning on...\n");
+  printf(dcontrol::check_defender() ?
+    "Windows defender is ACTIVE\n" :
+    "Windows defender is OFF\n");
 
-  auto helper = new wmic::helper(
-    "Root\\Microsoft\\Windows\\Defender",
-    "MSFT_MpPreference",
-    "Set"
-  );
-
-  if (auto error = helper->get_last_error())
+  if (dcontrol::check_defender())
   {
-    printf("Error has occured: %d", error);
-    system("pause");
-    return 1;
+    if (dcontrol::disable_defender())
+      printf("Disabled windows defender!\n");
   }
-
-  if (DCONTROL::check_defender())
-    helper->execute_cmd<BOOL>("DisableRealtimeMonitoring", wmic::variant_type::t_bool, TRUE);
-  else 
-    helper->execute_cmd<BOOL>("DisableRealtimeMonitoring", wmic::variant_type::t_bool, FALSE);
+  else
+  {
+    if (dcontrol::enable_defender())
+      printf("Enabled windows defender!\n");
+  }
 
   system("pause");
   return 0;
