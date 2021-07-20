@@ -1,7 +1,6 @@
 # Defender Control
-Open source windows defender disabler.
-Now you can disable windows defender permanently! 
-*until a major update happens*
+Open source windows defender disabler.  
+Now you can disable windows defender permanently! *until a major update happens*  
 
 ## What is this project?  
 We all know that disabling windefender is a pain going through countless registries & running endless powershell commands.  
