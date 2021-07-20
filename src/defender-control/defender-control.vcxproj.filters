@@ -25,6 +25,9 @@
     <Filter Include="Source Files\wmic">
       <UniqueIdentifier>{db30358b-f563-460e-92fb-eacafe3a68cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\trusted">
+      <UniqueIdentifier>{3a8b4441-6ad3-4aeb-9259-dd027a433699}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -42,6 +45,9 @@
     <ClCompile Include="reg.cpp">
       <Filter>Source Files\reg</Filter>
     </ClCompile>
+    <ClCompile Include="trusted.cpp">
+      <Filter>Source Files\trusted</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dcontrol.hpp">
@@ -58,6 +64,9 @@
     </ClInclude>
     <ClInclude Include="settings.hpp">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="trusted.hpp">
+      <Filter>Source Files\trusted</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

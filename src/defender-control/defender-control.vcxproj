@@ -147,6 +147,7 @@
     <ClCompile Include="dcontrol.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="reg.cpp" />
+    <ClCompile Include="trusted.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="wmic.cpp" />
   </ItemGroup>
@@ -154,6 +155,7 @@
     <ClInclude Include="dcontrol.hpp" />
     <ClInclude Include="settings.hpp" />
     <ClInclude Include="reg.hpp" />
+    <ClInclude Include="trusted.hpp" />
     <ClInclude Include="util.hpp" />
     <ClInclude Include="wmic.hpp" />
   </ItemGroup>
