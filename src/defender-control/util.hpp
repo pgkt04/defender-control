@@ -21,4 +21,8 @@ namespace util
   // Get current username
   //
   std::string get_user();
+
+  // Get current path of process
+  //
+  std::string get_current_path();
 }

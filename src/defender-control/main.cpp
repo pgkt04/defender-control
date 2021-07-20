@@ -11,8 +11,8 @@ int main()
 {
   if (!strstr(util::get_user().c_str(), "SYSTEM"))
   {
-    std::cout << "Insufficient permissions" << std::endl;
-    system("pause");
+    // get current process directory
+
     return 1;
   }
 

@@ -94,4 +94,14 @@ namespace util
     GetUserNameA(username, &username_len);
     return std::string(username);
   }
+
+  // Get current path of process
+  //
+  std::string get_current_path()
+  {
+    char buf[256];
+    size_t len = sizeof(buf);
+    int bytes = GetModuleFileName(NULL, buf, len);
+    return std::string(buf);
+  }
 }
