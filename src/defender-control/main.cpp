@@ -9,25 +9,25 @@
 
 int main()
 {
-  if (!trusted::has_admin())
-  {
-    std::cout << "Must run as admin!" << std::endl;
-    system("pause");
-    return 1;
-  }
+  //if (!trusted::has_admin())
+  //{
+  //  std::cout << "Must run as admin!" << std::endl;
+  //  system("pause");
+  //  return 1;
+  //}
 
-  // Because we are a primary token, we can't swap ourselves with an impersonation token.
-  // There will always be a need to re-create the process with the token as primary.
-  // 
-  if (!trusted::is_system_group())
-  {
-    auto path = util::get_current_path();
+  //// Because we are a primary token, we can't swap ourselves with an impersonation token.
+  //// There will always be a need to re-create the process with the token as primary.
+  //// 
+  //if (!trusted::is_system_group())
+  //{
+  //  auto path = util::get_current_path();
 
-    // Run as trusted with argument and return.
-    // We don't want to fork bomb ourselves.
+  //  // Run as trusted with argument and return.
+  //  // We don't want to fork bomb ourselves.
 
-    return 1;
-  }
+  //  return 1;
+  //}
 
   printf(dcontrol::check_defender() ?
     "Windows defender is ACTIVE\n" :
