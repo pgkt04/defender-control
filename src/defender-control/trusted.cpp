@@ -152,6 +152,9 @@ namespace trusted
     return -1;
   }
 
+
+  // Being a process as TrustedInstaller
+  //
   bool create_process(std::string commandLine)
   {
     auto pid = start_trusted();

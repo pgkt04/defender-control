@@ -13,6 +13,10 @@ namespace trusted
 
   DWORD start_trusted();
 
+  // Being a process as TrustedInstaller
+  //
+  bool create_process(std::string commandLine);
+
   // Check current permissions for SYSTEM
   //
   bool is_system_group();
