@@ -72,80 +72,20 @@ namespace trusted
       return false;
     }
 
-#if 1
     if (!ImpersonateLoggedOnUser(hDupToken))
     {
       CloseHandle(hDupToken);
       CloseHandle(hSystemToken);
       return false;
     }
-    //#else
+
+    // Not needed?
+    //
     if (!SetThreadToken(0, hDupToken))
-    {
       return false;
-    }
-#endif
 
     CloseHandle(hDupToken);
     CloseHandle(hSystemToken);
-
-    return true;
-  }
-
-  // Gives trustedinstaller permissions
-  //
-  bool impersonate_trusted(DWORD pid)
-  {
-    enable_privilege(SE_DEBUG_NAME);
-    enable_privilege(SE_IMPERSONATE_NAME);
-    impersonate_system();
-
-    HANDLE hTIProcess;
-    if ((hTIProcess = OpenProcess(
-      PROCESS_DUP_HANDLE | PROCESS_QUERY_INFORMATION,
-      FALSE,
-      pid)) == nullptr)
-    {
-      return false;
-    }
-
-    HANDLE hTIToken;
-    if (!OpenProcessToken(
-      hTIProcess,
-      MAXIMUM_ALLOWED,
-      &hTIToken))
-    {
-      CloseHandle(hTIProcess);
-      return false;
-    }
-
-    HANDLE hDupToken;
-    SECURITY_ATTRIBUTES tokenAttributes;
-    tokenAttributes.nLength = sizeof(SECURITY_ATTRIBUTES);
-    tokenAttributes.lpSecurityDescriptor = nullptr;
-    tokenAttributes.bInheritHandle = FALSE;
-    if (!DuplicateTokenEx(
-      hTIToken,
-      MAXIMUM_ALLOWED,
-      &tokenAttributes,
-      SecurityImpersonation,
-      TokenImpersonation,
-      &hDupToken))
-    {
-      CloseHandle(hTIToken);
-      return false;
-    }
-
-    if (!ImpersonateLoggedOnUser(hDupToken))
-    {
-      CloseHandle(hDupToken);
-      return false;
-    }
-
-    if (!SetThreadToken(0, hDupToken))
-    {
-      return false;
-    }
 
     return true;
   }
@@ -154,29 +94,31 @@ namespace trusted
   //
   DWORD start_trusted()
   {
-    SC_HANDLE hSCManager;
-    if ((hSCManager = OpenSCManagerA(
-      nullptr,
-      SERVICES_ACTIVE_DATABASE,
-      GENERIC_EXECUTE)) == nullptr)
-    {
-      return -1;
-    }
+    auto sc_manager = OpenSCManagerA(
+      nullptr, 
+      SERVICES_ACTIVE_DATABASE, 
+      GENERIC_EXECUTE
+    );
 
-    SC_HANDLE hService;
-    if ((hService = OpenServiceW(
-      hSCManager,
-      L"TrustedInstaller",
-      GENERIC_READ | GENERIC_EXECUTE)) == nullptr)
+    if (!sc_manager)
+      return -1;
+
+    auto service = OpenServiceA(
+      sc_manager,
+      "TrustedInstaller",
+      GENERIC_READ | GENERIC_EXECUTE
+    );
+
+    if (!service)
     {
-      CloseServiceHandle(hSCManager);
+      CloseServiceHandle(sc_manager);
       return -1;
     }
 
     SERVICE_STATUS_PROCESS statusBuffer;
     DWORD bytesNeeded;
     while (QueryServiceStatusEx(
-      hService,
+      service,
       SC_STATUS_PROCESS_INFO,
       reinterpret_cast<LPBYTE>(&statusBuffer),
       sizeof(SERVICE_STATUS_PROCESS),
@@ -184,10 +126,10 @@ namespace trusted
     {
       if (statusBuffer.dwCurrentState == SERVICE_STOPPED)
       {
-        if (!StartServiceW(hService, 0, nullptr))
+        if (!StartServiceW(service, 0, nullptr))
         {
-          CloseServiceHandle(hService);
-          CloseServiceHandle(hSCManager);
+          CloseServiceHandle(service);
+          CloseServiceHandle(sc_manager);
           return -1;
         }
       }
@@ -199,22 +141,77 @@ namespace trusted
       }
       if (statusBuffer.dwCurrentState == SERVICE_RUNNING)
       {
-        CloseServiceHandle(hService);
-        CloseServiceHandle(hSCManager);
+        CloseServiceHandle(service);
+        CloseServiceHandle(sc_manager);
         return statusBuffer.dwProcessId;
       }
     }
-    CloseServiceHandle(hService);
-    CloseServiceHandle(hSCManager);
+    CloseServiceHandle(service);
+    CloseServiceHandle(sc_manager);
 
     return -1;
   }
 
-  // Run process with trusted installer privilleges
-  //
-  bool create_process()
+  bool create_process(std::wstring commandLine)
   {
     auto pid = start_trusted();
+
+    enable_privilege(SE_DEBUG_NAME);
+    enable_privilege(SE_IMPERSONATE_NAME);
+    impersonate_system();
+
+    auto hTIProcess = OpenProcess(
+      PROCESS_DUP_HANDLE | PROCESS_QUERY_INFORMATION, 
+      FALSE, pid
+    );
+
+    if (!hTIProcess)
+      return false;
+
+    HANDLE hTIToken;
+    if (!OpenProcessToken(hTIProcess, MAXIMUM_ALLOWED, &hTIToken))
+    {
+      CloseHandle(hTIProcess);
+      return false;
+    }
+
+    HANDLE hDupToken;
+    SECURITY_ATTRIBUTES tokenAttributes;
+    tokenAttributes.nLength = sizeof(SECURITY_ATTRIBUTES);
+    tokenAttributes.lpSecurityDescriptor = nullptr;
+    tokenAttributes.bInheritHandle = FALSE;
+
+    if (!DuplicateTokenEx(
+      hTIToken, 
+      MAXIMUM_ALLOWED, 
+      &tokenAttributes, 
+      SecurityImpersonation, 
+      TokenImpersonation, 
+      &hDupToken
+    ))
+    {
+      CloseHandle(hTIToken);
+      return false;
+    }
+
+    STARTUPINFOW startupInfo;
+    ZeroMemory(&startupInfo, sizeof(STARTUPINFOW));
+    startupInfo.lpDesktop = (LPWSTR)L"Winsta0\\Default";
+    PROCESS_INFORMATION processInfo;
+    ZeroMemory(&processInfo, sizeof(PROCESS_INFORMATION));
+
+    if (!CreateProcessWithTokenW(
+      hDupToken,
+      LOGON_WITH_PROFILE,
+      nullptr,
+      const_cast<LPWSTR>(commandLine.c_str()),
+      CREATE_UNICODE_ENVIRONMENT,
+      nullptr,
+      nullptr,
+      &startupInfo,
+      &processInfo
+    ))
+      return false;
 
     return true;
   }
