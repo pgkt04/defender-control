@@ -100,8 +100,47 @@ namespace util
   std::string get_current_path()
   {
     char buf[256];
-    size_t len = sizeof(buf);
-    int bytes = GetModuleFileName(NULL, buf, len);
+    DWORD len = sizeof(buf);
+    int bytes = GetModuleFileNameA(NULL, buf, len);
     return std::string(buf);
   }
+
+  // Get target process id
+  //
+  DWORD get_pid(std::string process_name)
+  {
+    HANDLE hSnapshot;
+    if ((hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)) == INVALID_HANDLE_VALUE)
+      return -1;
+
+    DWORD pid = -1;
+    PROCESSENTRY32 pe;
+    ZeroMemory(&pe, sizeof(PROCESSENTRY32));
+    pe.dwSize = sizeof(PROCESSENTRY32);
+
+    if (!Process32First(hSnapshot, &pe))
+    {
+      CloseHandle(hSnapshot);
+      return -1;
+    }
+
+    while (Process32Next(hSnapshot, &pe))
+    {
+      if (pe.szExeFile == process_name)
+      {
+        pid = pe.th32ProcessID;
+        break;
+      }
+    }
+
+    if (pid == -1)
+    {
+      CloseHandle(hSnapshot);
+      return -1;
+    }
+
+    CloseHandle(hSnapshot);
+    return pid;
+  }
+
 }

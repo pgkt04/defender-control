@@ -2,6 +2,7 @@
 #include <Windows.h>
 #include <string>
 #include <lmcons.h>
+#include <TlHelp32.h>
 
 namespace util
 {
@@ -25,4 +26,8 @@ namespace util
   // Get current path of process
   //
   std::string get_current_path();
+
+  // Get target process id
+  //
+  DWORD get_pid(std::string process_name);
 }

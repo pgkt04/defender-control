@@ -19,7 +19,9 @@ namespace dcontrol
 
     // SecurityHealth
     //
-    if (REG::create_registry(L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run", hkey))
+    if (REG::create_registry(
+      L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run", 
+      hkey))
     {
       if (!REG::set_keyval_bin(hkey, L"SecurityHealth", 3))
         std::cout << "failed to write to SecurityHealth" << std::endl;
@@ -105,7 +107,6 @@ namespace dcontrol
 
   bool enable_defender()
   {
-
     if (!util::sub_43604B())
       return false;
 
@@ -119,7 +120,9 @@ namespace dcontrol
     if (!REG::set_keyval(hkey, L"DisableAntiSpyware", 0))
       std::cout << "failed to write to DisableAntiSpyware" << std::endl;
 
-    if (!REG::create_registry(L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run", hkey))
+    if (!REG::create_registry(
+      L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run",
+      hkey))
       std::cout << "failed to access CurrentVersion" << std::endl;
 
     if (!REG::set_keyval_bin(hkey, L"SecurityHealth", 2))
@@ -156,6 +159,7 @@ namespace dcontrol
     helper->execute<BOOL>("DisableAntiSpyware", wmic::variant_type::t_bool, FALSE);
     helper->execute<BOOL>("DisableAntiVirus", wmic::variant_type::t_bool, FALSE);
 
+    return true;
   }
 
   // Checks whether Real-Time Protection is activated on windows

@@ -31,53 +31,11 @@ namespace trusted
     return true;
   }
 
-  // Get target process id
-  //
-  DWORD get_pid(std::string process_name)
-  {
-    HANDLE hSnapshot;
-    if ((hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0)) == INVALID_HANDLE_VALUE)
-    {
-      return -1;
-    }
-
-    DWORD pid = -1;
-    PROCESSENTRY32 pe;
-    ZeroMemory(&pe, sizeof(PROCESSENTRY32));
-    pe.dwSize = sizeof(PROCESSENTRY32);
-
-    if (Process32First(hSnapshot, &pe))
-    {
-      while (Process32Next(hSnapshot, &pe))
-      {
-        if (pe.szExeFile == process_name)
-        {
-          pid = pe.th32ProcessID;
-          break;
-        }
-      }
-    }
-    else
-    {
-      CloseHandle(hSnapshot);
-      return -1;
-    }
-
-    if (pid == -1)
-    {
-      CloseHandle(hSnapshot);
-      return -1;
-    }
-
-    CloseHandle(hSnapshot);
-    return pid;
-  }
-
   // Give system permissions
   //
   bool impersonate_system()
   {
-    auto systemPid = get_pid("winlogon.exe");
+    auto systemPid = util::get_pid("winlogon.exe");
     HANDLE hSystemProcess;
     if ((hSystemProcess = OpenProcess(
       PROCESS_DUP_HANDLE | PROCESS_QUERY_INFORMATION,
@@ -265,28 +223,31 @@ namespace trusted
   //
   bool is_system_group()
   {
-    DWORD i, dwSize = 0, dwResult = 0;
-    HANDLE hToken;
-    PTOKEN_USER Ptoken_User;
+    DWORD dw_size = 0;
+    DWORD dw_result = 0;
+    HANDLE token;
+    PTOKEN_USER token_user;
+    LPWSTR SID = NULL;
 
-    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &hToken))
+    if (!OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token))
       return false;
 
-    if (!GetTokenInformation(hToken, TokenUser, NULL, dwSize, &dwSize))
+    if (!GetTokenInformation(token, TokenUser, NULL, dw_size, &dw_size))
     {
-      dwResult = GetLastError();
-      if (dwResult != ERROR_INSUFFICIENT_BUFFER)
+      dw_result = GetLastError();
+      if (dw_result != ERROR_INSUFFICIENT_BUFFER)
         return false;
     }
 
-    Ptoken_User = (PTOKEN_USER)GlobalAlloc(GPTR, dwSize);
+    token_user = (PTOKEN_USER)GlobalAlloc(GPTR, dw_size);
 
-    if (!GetTokenInformation(hToken, TokenUser, Ptoken_User, dwSize, &dwSize))
-      return FALSE;
+    if (!GetTokenInformation(token, TokenUser, token_user, dw_size, &dw_size))
+      return false;
 
-    LPWSTR SID = NULL;
+    if (!token_user)
+      return false;
 
-    if (!ConvertSidToStringSidW(Ptoken_User->User.Sid, &SID))
+    if (!ConvertSidToStringSidW(token_user->User.Sid, &SID))
       return false;
 
     // All SID can be found here
@@ -296,8 +257,8 @@ namespace trusted
     if (_wcsicmp(L"S-1-5-18", SID) == 0)
       return true;
 
-    if (Ptoken_User)
-      GlobalFree(Ptoken_User);
+    if (token_user)
+      GlobalFree(token_user);
 
     return false;
   }
@@ -309,16 +270,16 @@ namespace trusted
     BOOL ret = FALSE;
     HANDLE token = NULL;
 
-    if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token)) 
+    if (OpenProcessToken(GetCurrentProcess(), TOKEN_QUERY, &token))
     {
       TOKEN_ELEVATION elevation;
       DWORD rlen = sizeof(TOKEN_ELEVATION);
 
-      if (GetTokenInformation(token, TokenElevation, &elevation, sizeof(elevation), &rlen)) 
+      if (GetTokenInformation(token, TokenElevation, &elevation, sizeof(elevation), &rlen))
         ret = elevation.TokenIsElevated;
     }
 
-    if (token) 
+    if (token)
       CloseHandle(token);
 
     return ret;
