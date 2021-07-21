@@ -20,7 +20,6 @@ int main(int argc, char **argv)
   if (!trusted::is_system_group() && argc == 1)
   {
     auto path = util::get_current_path();
-    auto pid = trusted::start_trusted();
 
     return EXIT_SUCCESS;
   }

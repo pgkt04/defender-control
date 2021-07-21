@@ -95,8 +95,8 @@ namespace trusted
   DWORD start_trusted()
   {
     auto sc_manager = OpenSCManagerA(
-      nullptr, 
-      SERVICES_ACTIVE_DATABASE, 
+      nullptr,
+      SERVICES_ACTIVE_DATABASE,
       GENERIC_EXECUTE
     );
 
@@ -152,7 +152,7 @@ namespace trusted
     return -1;
   }
 
-  bool create_process(std::wstring commandLine)
+  bool create_process(std::string commandLine)
   {
     auto pid = start_trusted();
 
@@ -161,7 +161,7 @@ namespace trusted
     impersonate_system();
 
     auto hTIProcess = OpenProcess(
-      PROCESS_DUP_HANDLE | PROCESS_QUERY_INFORMATION, 
+      PROCESS_DUP_HANDLE | PROCESS_QUERY_INFORMATION,
       FALSE, pid
     );
 
@@ -182,11 +182,11 @@ namespace trusted
     tokenAttributes.bInheritHandle = FALSE;
 
     if (!DuplicateTokenEx(
-      hTIToken, 
-      MAXIMUM_ALLOWED, 
-      &tokenAttributes, 
-      SecurityImpersonation, 
-      TokenImpersonation, 
+      hTIToken,
+      MAXIMUM_ALLOWED,
+      &tokenAttributes,
+      SecurityImpersonation,
+      TokenImpersonation,
       &hDupToken
     ))
     {
@@ -204,7 +204,7 @@ namespace trusted
       hDupToken,
       LOGON_WITH_PROFILE,
       nullptr,
-      const_cast<LPWSTR>(commandLine.c_str()),
+      const_cast<LPWSTR>(util::string_to_wide(commandLine).c_str()),
       CREATE_UNICODE_ENVIRONMENT,
       nullptr,
       nullptr,
