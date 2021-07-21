@@ -19,8 +19,8 @@ int main(int argc, char **argv)
   // 
   if (!trusted::is_system_group() && argc == 1)
   {
-    auto path = util::get_current_path();
-
+    printf("Restarting with privileges");
+    trusted::create_process(util::get_current_path());
     return EXIT_SUCCESS;
   }
 
@@ -40,5 +40,6 @@ int main(int argc, char **argv)
   }
 
   system("pause");
-  return 0;
+
+  return EXIT_SUCCESS;
 }
