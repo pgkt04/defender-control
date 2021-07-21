@@ -33,6 +33,7 @@ namespace wmic
 
     BSTR method_name;
     BSTR class_name;
+    std::string class_name_s;
 
   public:
 
@@ -43,6 +44,113 @@ namespace wmic
     //
     int get_last_error();
 
+    // Get WMI function
+    //
+    bool get(std::string variable, variant_type type, bstr_t& value)
+    {
+      IEnumWbemClassObject* pEnumerator = NULL;
+
+      auto query = "SELECT * FROM " + class_name_s;
+
+      auto hres = service_ptr->ExecQuery(
+        bstr_t("WQL"),
+        bstr_t(query.c_str()),
+        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+        NULL,
+        &pEnumerator
+      );
+
+      if (FAILED(hres))
+        return false;
+
+      // Step 7: -------------------------------------------------
+      // Get the data from the query in step 6 -------------------
+
+      IWbemClassObject* pclsObj = NULL;
+      ULONG uReturn = 0;
+
+      while (pEnumerator)
+      {
+        HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1,
+          &pclsObj, &uReturn);
+
+        if (0 == uReturn)
+          break;
+
+        VARIANT vtProp = {};
+        hr = pclsObj->Get(util::string_to_wide(variable).c_str(), 0, &vtProp, 0, 0);
+
+        value = vtProp.bstrVal;
+
+        VariantClear(&vtProp);
+        pclsObj->Release();
+      }
+
+      return true;
+    }
+
+    // Get WMI function
+    //
+    template<typename T>
+    bool get(std::string variable, variant_type type, T& value)
+    {
+      IEnumWbemClassObject* pEnumerator = NULL;
+
+      auto query = "SELECT * FROM " + class_name_s;
+
+      auto hres = service_ptr->ExecQuery(
+        bstr_t("WQL"),
+        bstr_t(query.c_str()),
+        WBEM_FLAG_FORWARD_ONLY | WBEM_FLAG_RETURN_IMMEDIATELY,
+        NULL,
+        &pEnumerator
+      );
+
+      if (FAILED(hres))
+        return false;
+
+      // Step 7: -------------------------------------------------
+      // Get the data from the query in step 6 -------------------
+
+      IWbemClassObject* pclsObj = NULL;
+      ULONG uReturn = 0;
+
+      while (pEnumerator)
+      {
+        HRESULT hr = pEnumerator->Next(WBEM_INFINITE, 1,
+          &pclsObj, &uReturn);
+
+        if (0 == uReturn)
+          break;
+
+        VARIANT vtProp = {};
+        hr = pclsObj->Get(util::string_to_wide(variable).c_str(), 0, &vtProp, 0, 0);
+
+        switch (type)
+        {
+        case variant_type::t_bool:
+          value = vtProp.boolVal;
+          break;
+
+        case variant_type::t_uint8:
+          value = vtProp.uintVal;
+          break;
+
+        case variant_type::t_uint32:
+          value = vtProp.uintVal;
+          break;
+
+        default:
+          last_error = 6;
+          return false;
+        }
+
+        VariantClear(&vtProp);
+        pclsObj->Release();
+      }
+
+      return true;
+    }
 
     void execute(std::string variable, std::string value)
     {
@@ -74,7 +182,6 @@ namespace wmic
         pOutParams->Release();
     }
 
-
     // Execute WMI set function
     //
     template<typename T>
@@ -99,6 +206,7 @@ namespace wmic
       case variant_type::t_uint32:
         var_cmd.vt = VT_UI4;
         var_cmd.uintVal = value;
+        break;
 
       default:
         last_error = 6;

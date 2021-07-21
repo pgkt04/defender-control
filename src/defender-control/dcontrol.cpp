@@ -2,6 +2,41 @@
 
 namespace dcontrol
 {
+  // Toggles windows tamper protection
+  //
+  void toggle_tamper(bool enable)
+  {
+    HKEY hkey;
+
+    if (REG::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender\\Features", hkey))
+    {
+      if (enable)
+      {
+        if (!REG::set_keyval(hkey, L"TamperProtection", 5))
+          std::cout << "failed to write to TamperProtection" << std::endl;
+      }
+      else
+      {
+        if (!REG::set_keyval(hkey, L"TamperProtection", 0))
+          std::cout << "failed to write to TamperProtection" << std::endl;
+      }
+    }
+  }
+
+  // Ends the smart screen process
+  //
+  void kill_smartscreen()
+  {
+
+  }
+
+  // Stop or run the windefend service
+  //
+  void manage_windefend()
+  {
+
+  }
+
   // disables window defender
   //
   bool disable_defender()
@@ -20,7 +55,7 @@ namespace dcontrol
     // SecurityHealth
     //
     if (REG::create_registry(
-      L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run", 
+      L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run",
       hkey))
     {
       if (!REG::set_keyval_bin(hkey, L"SecurityHealth", 3))
@@ -69,7 +104,7 @@ namespace dcontrol
 
     if (auto error = helper->get_last_error())
     {
-      printf("Error has occured: %d", error);
+      printf("Error has occured: %d\n", error);
       return false;
     }
 
@@ -106,6 +141,8 @@ namespace dcontrol
     // Disable windefend
     // Set windefend to DEMAND
 
+    delete helper;
+
     return true;
   }
 
@@ -140,7 +177,7 @@ namespace dcontrol
 
     if (auto error = helper->get_last_error())
     {
-      printf("Error has occured: %d", error);
+      printf("Error has occured: %d\n", error);
       return false;
     }
 
@@ -163,6 +200,8 @@ namespace dcontrol
     helper->execute<BOOL>("DisableAntiSpyware", wmic::variant_type::t_bool, FALSE);
     helper->execute<BOOL>("DisableAntiVirus", wmic::variant_type::t_bool, FALSE);
 
+    delete helper;
+
     return true;
   }
 
@@ -170,8 +209,34 @@ namespace dcontrol
   //
   bool check_defender(uint32_t flags)
   {
-    return REG::read_key(
-      L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection",
-      L"DisableRealtimeMonitoring") == 0;
+    //return REG::read_key(
+    //  L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection",
+    //  L"DisableRealtimeMonitoring") == 0;
+
+    std::cout << "checking defender" << std::endl;
+
+    auto helper = new wmic::helper(
+      "Root\\Microsoft\\Windows\\Defender",
+      "MSFT_MpPreference",
+      "Set"
+    );
+
+    if (auto error = helper->get_last_error())
+    {
+      printf("Error has occured: %d\n", error);
+      delete helper;
+      return true;
+    }
+
+    bool result = false;
+    if (helper->get<bool>("DisableRealtimeMonitoring", wmic::variant_type::t_bool, result))
+      std::cout << result << std::endl;
+    else
+      std::cout << "failed to read wmic val" << std::endl;
+
+    delete helper;
+
+    return result;
   }
 }
+// Query WMI 

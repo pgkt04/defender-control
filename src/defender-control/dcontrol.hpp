@@ -10,6 +10,10 @@
 
 namespace dcontrol
 {
+  // Toggles windows tamper protection
+  //
+  void toggle_tamper(bool enable);
+
   bool disable_defender();
   bool enable_defender();
   bool check_defender(uint32_t flags = 0);

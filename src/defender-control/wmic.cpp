@@ -21,6 +21,8 @@ namespace wmic
     method_name = SysAllocString(util::string_to_wide(wmethod).c_str());
     class_name = SysAllocString(util::string_to_wide(wclass).c_str());
 
+    class_name_s = wclass;
+
     // Setup COM library
     //
     hres = CoInitializeEx(0, COINIT_MULTITHREADED);
