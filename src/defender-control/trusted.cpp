@@ -256,7 +256,9 @@ namespace trusted
   //
   bool create_process()
   {
+    auto pid = start_trusted();
 
+    return true;
   }
 
   // Check current permissions for SYSTEM
