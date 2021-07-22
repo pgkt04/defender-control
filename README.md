@@ -3,7 +3,7 @@ Open source windows defender disabler.
 Now you can disable windows defender permanently!   
 
 ## What is this project?  
-We all know that disabling windefender is very difficult since microsoft is constantly enforcing changes. 
+We all know that disabling windefender is very difficult since microsoft is constantly enforcing changes.  
 The first solution is to install an anti-virus - but thats not the point if we are trying to disable it!  
 The next easiest solution is to use freeware thats already available on the internet - but none of them are native & open source...  
 I like open source, so I made a safe to use open source defender control.  
