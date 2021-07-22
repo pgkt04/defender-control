@@ -21,7 +21,7 @@ Yes it is safe, feel free to review the code in the repository yourself.
 ![Demo](https://github.com/qtkite/defender-control/blob/main/resources/demo.gif?raw=true)
 
 ## Release
-You can find the first release over at the releases on the left!  
+You can find the first release over at the releases on the right.  
 Or alternatively click [here](https://github.com/qtkite/defender-control/releases/tag/v1.0).
   
 Please note the release only disables defender at the moment.  
