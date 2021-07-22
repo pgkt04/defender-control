@@ -351,6 +351,8 @@ We can find the class here: https://docs.microsoft.com/en-us/dotnet/api/microsof
 
 It is also located in windows binaries in the following path: C:\Program Files (x86)\Reference Assemblies\Microsoft\WMI\v1.0 
 
+Here is an intersting article that got me started in understanding the WMI: https://www.fireeye.com/content/dam/fireeye-www/global/en/current-threats/pdfs/wp-windows-management-instrumentation.pdf
+
 ## Gaining permission
 Remeber when I said you need more permissions to edit certain registries and edit services?  
 Well there is! 
