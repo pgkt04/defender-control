@@ -9,7 +9,7 @@ int main(int argc, char** argv)
 {
   if (!trusted::has_admin())
   {
-    std::cout << "Must run as admin!" << std::endl;
+    printf("Must run as admin!\n");
     system("pause");
     return EXIT_FAILURE;
   }
