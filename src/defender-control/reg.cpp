@@ -1,6 +1,6 @@
 #include "reg.hpp"
 
-namespace REG
+namespace reg
 {
   // reads a key from HKEY_LOCAL_MACHINE
   //

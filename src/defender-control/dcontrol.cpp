@@ -8,16 +8,16 @@ namespace dcontrol
   {
     HKEY hkey;
 
-    if (REG::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender\\Features", hkey))
+    if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender\\Features", hkey))
     {
       if (enable)
       {
-        if (!REG::set_keyval(hkey, L"TamperProtection", 5))
+        if (!reg::set_keyval(hkey, L"TamperProtection", 5))
           std::cout << "failed to write to TamperProtection" << std::endl;
       }
       else
       {
-        if (!REG::set_keyval(hkey, L"TamperProtection", 0))
+        if (!reg::set_keyval(hkey, L"TamperProtection", 0))
           std::cout << "failed to write to TamperProtection" << std::endl;
       }
     }
@@ -113,9 +113,9 @@ namespace dcontrol
     HKEY hkey;
 
     // DisableAntiSpyware
-    if (REG::create_registry(L"SOFTWARE\\Policies\\Microsoft\\Windows Defender", hkey))
+    if (reg::create_registry(L"SOFTWARE\\Policies\\Microsoft\\Windows Defender", hkey))
     {
-      if (!REG::set_keyval(hkey, L"DisableAntiSpyware", 1))
+      if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 1))
         std::cout << "failed to write to DisableAntiSpyware" << std::endl;
     }
     else
@@ -123,11 +123,11 @@ namespace dcontrol
 
     // SecurityHealth
     //
-    if (REG::create_registry(
+    if (reg::create_registry(
       L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run",
       hkey))
     {
-      if (!REG::set_keyval_bin(hkey, L"SecurityHealth", 3))
+      if (!reg::set_keyval_bin(hkey, L"SecurityHealth", 3))
         std::cout << "failed to write to SecurityHealth" << std::endl;
     }
     else
@@ -135,9 +135,9 @@ namespace dcontrol
 
     // Protected by anti-tamper
     //
-    if (REG::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender", hkey))
+    if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender", hkey))
     {
-      if (!REG::set_keyval(hkey, L"DisableAntiSpyware", 1))
+      if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 1))
         std::cout << "failed to write to DisableAntiSpyware" << std::endl;
     }
     else
@@ -146,9 +146,9 @@ namespace dcontrol
     // Protected by anti-tamper
     // Start (3 off) (2 on)
     //
-    if (REG::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\WinDefend", hkey))
+    if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\WinDefend", hkey))
     {
-      if (!REG::set_keyval(hkey, L"Start", 3))
+      if (!reg::set_keyval(hkey, L"Start", 3))
         std::cout << "failed to write to Start" << std::endl;
     }
     else
@@ -157,9 +157,9 @@ namespace dcontrol
 
     // Protected by anti-tamper
     //
-    if (REG::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection", hkey))
+    if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection", hkey))
     {
-      if (!REG::set_keyval(hkey, L"DisableRealtimeMonitoring", 1))
+      if (!reg::set_keyval(hkey, L"DisableRealtimeMonitoring", 1))
         std::cout << "failed to disable DisableRealtimeMonitoring" << std::endl;
     }
     else
@@ -224,18 +224,18 @@ namespace dcontrol
 
     HKEY hkey;
 
-    if (!REG::create_registry(L"SOFTWARE\\Policies\\Microsoft\\Windows Defender", hkey))
+    if (!reg::create_registry(L"SOFTWARE\\Policies\\Microsoft\\Windows Defender", hkey))
       std::cout << "failed to access Policies" << std::endl;
 
-    if (!REG::set_keyval(hkey, L"DisableAntiSpyware", 0))
+    if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 0))
       std::cout << "failed to write to DisableAntiSpyware" << std::endl;
 
-    if (!REG::create_registry(
+    if (!reg::create_registry(
       L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run",
       hkey))
       std::cout << "failed to access CurrentVersion" << std::endl;
 
-    if (!REG::set_keyval_bin(hkey, L"SecurityHealth", 2))
+    if (!reg::set_keyval_bin(hkey, L"SecurityHealth", 2))
       std::cout << "failed to write to SecurityHealth" << std::endl;
 
     auto helper = new wmic::helper(
