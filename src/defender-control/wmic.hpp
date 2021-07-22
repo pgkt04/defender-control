@@ -63,9 +63,6 @@ namespace wmic
       if (FAILED(hres))
         return false;
 
-      // Step 7: -------------------------------------------------
-      // Get the data from the query in step 6 -------------------
-
       IWbemClassObject* pclsObj = NULL;
       ULONG uReturn = 0;
 
@@ -108,9 +105,6 @@ namespace wmic
 
       if (FAILED(hres))
         return false;
-
-      // Step 7: -------------------------------------------------
-      // Get the data from the query in step 6 -------------------
 
       IWbemClassObject* pclsObj = NULL;
       ULONG uReturn = 0;
