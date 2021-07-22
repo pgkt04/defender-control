@@ -4,8 +4,8 @@ Now you can disable windows defender permanently!
 
 ## What is this project?  
 We all know that disabling windefender is very difficult since microsoft is constantly enforcing changes.   
-The next easiest solution is to use freeware and currently the most popular one is by sordum.  
-But I like open source, so I made a safe to use open source defender control.  
+The next easiest solution is to use freeware thats already available on the internet - but none of them are native & open source...  
+I like open source, so I made a safe to use open source defender control.  
 
 ## Demo
 ![Demo](https://github.com/qtkite/defender-control/blob/main/resources/demo.gif?raw=true)
