@@ -32,9 +32,14 @@ namespace dcontrol
 
   // Stop or run the windefend service
   //
-  void manage_windefend()
+  void manage_windefend(bool toggle)
   {
+    auto sc_manager = OpenSCManagerA(0, 0, SC_MANAGER_CONNECT);
 
+    if (!sc_manager)
+    {
+      return;
+    }
   }
 
   // disables window defender

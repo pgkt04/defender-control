@@ -17,4 +17,8 @@ namespace dcontrol
   bool disable_defender();
   bool enable_defender();
   bool check_defender(uint32_t flags = 0);
+
+  // Stop or run the windefend service
+  //
+  void manage_windefend(bool toggle);
 }
