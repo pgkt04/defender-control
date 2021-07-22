@@ -1,5 +1,5 @@
 ## Reversal
-I reversed parts of the freeware with some hooks & x64 debugger, here are some of my findings
+I reversed parts of the freeware with some hooks & x64 debugger, read a bunch of security papers & here are some of my findings!
 
 ## x64 Debug 
 ### disabling defender
