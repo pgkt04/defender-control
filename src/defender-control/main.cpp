@@ -5,7 +5,7 @@
 #include "wmic.hpp"
 #include "trusted.hpp"
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
   if (!trusted::has_admin())
   {
@@ -24,32 +24,41 @@ int main(int argc, char **argv)
     return EXIT_SUCCESS;
   }
 
-  system("whoami");
-
-
-  // Disable smart screen
-  //
-  
-  // Disable windows defender
-  //
-
-  // Disabling tamper protection
-  //
-  dcontrol::toggle_tamper(false);
-
-  printf(dcontrol::check_defender() ?
-    "Windows defender is ACTIVE\n" :
-    "Windows defender is OFF\n");
-
-  if (dcontrol::check_defender())
+  try
   {
+    // Disable smart screen
+    //
+    dcontrol::kill_smartscreen();
+
+    // Disable windows defender
+    //
+    dcontrol::manage_windefend(false);
+
+    // Disabling tamper protection
+    //
+    dcontrol::toggle_tamper(false);
+
+    printf(dcontrol::check_defender() ?
+      "Windows defender is ACTIVE\n" :
+      "Windows defender is OFF\n");
+
     if (dcontrol::disable_defender())
       printf("Disabled windows defender!\n");
+
+    //if (dcontrol::check_defender())
+    //{
+    //  if (dcontrol::disable_defender())
+    //    printf("Disabled windows defender!\n");
+    //}
+    //else
+    //{
+    //  if (dcontrol::enable_defender())
+    //    printf("Enabled windows defender!\n");
+    //}
   }
-  else
+  catch (std::exception e)
   {
-    if (dcontrol::enable_defender())
-      printf("Enabled windows defender!\n");
+    std::cout << e.what() << std::endl;
   }
 
   system("pause");

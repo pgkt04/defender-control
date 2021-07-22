@@ -27,19 +27,83 @@ namespace dcontrol
   //
   void kill_smartscreen()
   {
-
+    auto pid = util::get_pid("smartscreen.exe");
+    auto proc = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
+    TerminateProcess(proc, 0);
   }
 
   // Stop or run the windefend service
   //
-  void manage_windefend(bool toggle)
+  bool manage_windefend(bool enable)
   {
     auto sc_manager = OpenSCManagerA(0, 0, SC_MANAGER_CONNECT);
 
     if (!sc_manager)
+      return false;
+
+    auto service = OpenServiceA(
+      sc_manager,
+      "WinDefend",
+      SERVICE_START | SERVICE_CHANGE_CONFIG | SERVICE_STOP | DELETE
+    );
+
+    if (!service)
     {
-      return;
+      CloseServiceHandle(sc_manager);
+      return false;
     }
+
+    if (enable)
+    {
+      // TODO implement
+      //
+
+      // Change to auto-start
+      //
+
+      // Start the service
+      //
+    }
+    else
+    {
+      // Stop the service
+      //
+      SERVICE_STATUS scStatus;
+      if (!ControlService(service, SERVICE_CONTROL_STOP, &scStatus))
+      {
+        auto last_error = GetLastError();
+
+        if (last_error == ERROR_SERVICE_NOT_ACTIVE)
+          return true;
+
+        throw std::runtime_error("Failed to stop windefend service " + std::to_string(last_error));
+        return false;
+      }
+
+      // Change to DEMAND
+      //
+      if (!ChangeServiceConfigA(
+        service,
+        SERVICE_NO_CHANGE,
+        SERVICE_DEMAND_START,
+        SERVICE_NO_CHANGE,
+        0, 0, 0, 0, 0, 0, 0
+      ))
+      {
+        throw std::runtime_error("Failed to modify windefend service" + std::to_string(GetLastError()));
+        return false;
+      }
+
+      // Allow time for service to stop
+      // TODO: Handle this automatically
+      //
+      Sleep(3000);
+    }
+
+    CloseServiceHandle(service);
+    CloseServiceHandle(sc_manager);
+
+    return true;
   }
 
   // disables window defender
@@ -210,15 +274,13 @@ namespace dcontrol
     return true;
   }
 
-  // Checks whether Real-Time Protection is activated on windows
+  // Returns true if RealTimeMonitoring is activated
   //
   bool check_defender(uint32_t flags)
   {
     //return REG::read_key(
     //  L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection",
     //  L"DisableRealtimeMonitoring") == 0;
-
-    std::cout << "checking defender" << std::endl;
 
     auto helper = new wmic::helper(
       "Root\\Microsoft\\Windows\\Defender",
@@ -228,20 +290,17 @@ namespace dcontrol
 
     if (auto error = helper->get_last_error())
     {
+      // Throw error instead
+      //
       printf("Error has occured: %d\n", error);
       delete helper;
       return true;
     }
 
     bool result = false;
-    if (helper->get<bool>("DisableRealtimeMonitoring", wmic::variant_type::t_bool, result))
-      std::cout << result << std::endl;
-    else
-      std::cout << "failed to read wmic val" << std::endl;
-
+    helper->get<bool>("DisableRealtimeMonitoring", wmic::variant_type::t_bool, result);
     delete helper;
-
-    return result;
+    return (!result);
   }
 }
 // Query WMI 

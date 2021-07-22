@@ -18,7 +18,11 @@ namespace dcontrol
   bool enable_defender();
   bool check_defender(uint32_t flags = 0);
 
+  // Ends the smart screen process
+  //
+  void kill_smartscreen();
+
   // Stop or run the windefend service
   //
-  void manage_windefend(bool toggle);
+  bool manage_windefend(bool enable);
 }
