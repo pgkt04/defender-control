@@ -8,6 +8,15 @@ The first solution is to install an anti-virus - but thats not the point if we a
 The next easiest solution is to use freeware thats already available on the internet - but none of them are native & open source...  
 I like open source, so I made a safe to use open source defender control.  
 
+## What does it do?
+1. It gains TrustedInstaller permissions
+2. It will disable windefender services + smartscreen
+3. It will disable anti-tamper protection
+4. It will disable all relevant registries + wmi settings
+
+## Is it safe?
+Yes it is safe, feel free to review the code in the repository yourself.
+
 ## Demo
 ![Demo](https://github.com/qtkite/defender-control/blob/main/resources/demo.gif?raw=true)
 
