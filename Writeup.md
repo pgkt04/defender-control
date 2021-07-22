@@ -365,3 +365,9 @@ Well. We can once we disable tamper protection... But to do that without going t
 
 ## Conclusion
 Well thats all there is to disabling defender... TLDR: We gain TrustedInstaller permission, disable the windefend service and modify the registries & make calls to the wmi to our hearts content.
+
+## Relevant links:
+- https://www.fireeye.com/content/dam/fireeye-www/global/en/current-threats/pdfs/wp-windows-management-instrumentation.pdf
+- https://0x00-0x00.github.io/research/2018/10/17/Windows-API-and-Impersonation-Part1.html  
+- http://myne-us.blogspot.cz/2012/08/reverse-engineering-powershell-cmdlets.html
+
