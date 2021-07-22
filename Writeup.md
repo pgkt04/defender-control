@@ -351,4 +351,15 @@ We can find the class here: https://docs.microsoft.com/en-us/dotnet/api/microsof
 
 It is also located in windows binaries in the following path: C:\Program Files (x86)\Reference Assemblies\Microsoft\WMI\v1.0 
 
+## Gaining permission
+Remeber when I said you need more permissions to edit certain registries and edit services?  
+Well there is! 
+You can read more about it here: https://0x00-0x00.github.io/research/2018/10/17/Windows-API-and-Impersonation-Part1.html  
 
+We adapt it into C++ code which can be found in trusted. Then using an elevated process, we can now edit those registries we can't before!.
+
+## Windows Tamper Protection
+Well. We can once we disable tamper protection... But to do that without going through the security menu - we need to first kill the windefend service. Luckily now that we have TrustedInstaller privillege we can directly do that using winapi.
+
+## Conclusion
+Well thats all there is to disabling defender... TLDR: We gain TrustedInstaller permission, disable the windefend service and modify the registries & make calls to the wmi to our hearts content.
