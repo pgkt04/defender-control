@@ -3,7 +3,7 @@ Open source windows defender disabler.
 Now you can disable windows defender permanently!   
 
 ## What is this project?  
-We all know that disabling windefender is a pain going through countless registries & running endless powershell commands.  
+We all know that disabling windefender is very difficult since microsoft is constantly enforcing changes.   
 The next easiest solution is to use freeware and currently the most popular one is by sordum.  
 But I like open source, so I made a safe to use open source defender control.  
 
