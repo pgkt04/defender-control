@@ -29,3 +29,7 @@ I will release a version that enables it in the near future.
 
 ## Writeup
 If you are interested in how I developed this program check out the writeup [here](https://github.com/qtkite/defender-control/blob/main/Writeup.md).
+
+## TO-DO
+- Build an interface
+- Add command line support
