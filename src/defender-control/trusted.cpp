@@ -80,7 +80,6 @@ namespace trusted
     }
 
     // Not needed?
-    //
     if (!SetThreadToken(0, hDupToken))
       return false;
 
