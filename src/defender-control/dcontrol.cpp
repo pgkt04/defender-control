@@ -53,16 +53,32 @@ namespace dcontrol
       return false;
     }
 
+    // TODO: Add a better implementation
+    // https://docs.microsoft.com/en-us/windows/win32/services/starting-a-service
+    //
     if (enable)
     {
-      // TODO implement
-      //
-
       // Change to auto-start
       //
+      if (!ChangeServiceConfigA(
+        service,
+        SERVICE_NO_CHANGE,
+        SERVICE_AUTO_START,
+        SERVICE_NO_CHANGE,
+        0, 0, 0, 0, 0, 0, 0
+      ))
+      {
+        throw std::runtime_error("Failed to modify windefend service" + std::to_string(GetLastError()));
+        return false;
+      }
 
       // Start the service
       //
+      if (!StartServiceA(service, 0, NULL))
+      {
+        throw std::runtime_error("Failed to start service");
+        return false;
+      }
     }
     else
     {
@@ -215,12 +231,12 @@ namespace dcontrol
     return true;
   }
 
+  // Enables defender, assumes we have TrustedInstaller permissions
+  //
   bool enable_defender()
   {
-    if (!util::sub_43604B())
-      return false;
-
-    util::set_privilege(SE_DEBUG_NAME, TRUE);
+    manage_windefend(false);
+    kill_smartscreen();
 
     HKEY hkey;
 
@@ -271,6 +287,7 @@ namespace dcontrol
 
     delete helper;
 
+    manage_windefend(true);
     return true;
   }
 
