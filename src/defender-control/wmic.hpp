@@ -159,10 +159,7 @@ namespace wmic
         0, class_inst_ptr, &pOutParams, 0);
 
       if (FAILED(hres))
-      {
         last_error = 7;
-        printf("Error executing\n");
-      }
 
       // Cleanup
       //
@@ -214,10 +211,7 @@ namespace wmic
         0, class_inst_ptr, &pOutParams, 0);
 
       if (FAILED(hres))
-      {
         last_error = 7;
-        printf("Error executing\n");
-      }
 
       // Cleanup
       //

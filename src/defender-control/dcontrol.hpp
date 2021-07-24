@@ -14,8 +14,16 @@ namespace dcontrol
   //
   void toggle_tamper(bool enable);
 
+  // Disables window defender
+  //
   bool disable_defender();
+
+  // Enables defender, assumes we have TrustedInstaller permissions
+  //
   bool enable_defender();
+
+  // Returns true if RealTimeMonitoring is activated
+  //
   bool check_defender(uint32_t flags = 0);
 
   // Ends the smart screen process
