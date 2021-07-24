@@ -7,6 +7,8 @@
         mc:Ignorable="d"
         Title="MainWindow" Height="450" Width="800">
     <Grid>
+        <Button Content="Enable Defender" HorizontalAlignment="Center" VerticalAlignment="Center" Height="49" Width="236"/>
+        <Button Content="Disable Defender" HorizontalAlignment="Center" VerticalAlignment="Top" Height="49" Width="236" Margin="0,281,0,0" RenderTransformOrigin="0.508,1.276"/>
 
     </Grid>
 </Window>
