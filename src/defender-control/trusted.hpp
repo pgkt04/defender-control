@@ -7,10 +7,16 @@
 
 namespace trusted
 {
+  // Enable prvileges
+  //
   bool enable_privilege(std::string privilege);
 
+  // Give system permissions
+  //
   bool impersonate_system();
 
+  // Start the trusted installer service
+  //
   DWORD start_trusted();
 
   // Being a process as TrustedInstaller

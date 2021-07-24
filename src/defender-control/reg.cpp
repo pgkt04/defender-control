@@ -77,6 +77,8 @@ namespace reg
     return true;
   }
 
+  // Set value in registry as a DWORD
+  //
   bool set_keyval(HKEY& hkey, const wchar_t* value_name, DWORD value)
   {
     auto ret = RegSetValueExW(hkey, value_name, 0, REG_DWORD,
@@ -91,6 +93,8 @@ namespace reg
     return true;
   }
 
+  // Set value in registry as binary mode
+  //
   bool set_keyval_bin(HKEY& hkey, const wchar_t* value_name, DWORD value)
   {
     auto ret = RegSetValueExW(hkey, value_name, 0, REG_BINARY,

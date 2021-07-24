@@ -320,4 +320,3 @@ namespace dcontrol
     return (!result);
   }
 }
-// Query WMI 
