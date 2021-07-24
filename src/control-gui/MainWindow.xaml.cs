@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Threading;
 
 namespace control_gui
 {
@@ -25,19 +26,27 @@ namespace control_gui
       InitializeComponent();
     }
 
+    private void status_thread()
+    {
+      while (true)
+      {
+        // Set image status
+      }
+    }
+
     private void MainWindow1_Initialized(object sender, EventArgs e)
     {
-
+      // Create a thread to set status
+      Thread status = new Thread(status_thread);
+      status.Start();
     }
 
     private void Button_Click(object sender, RoutedEventArgs e)
     {
-
     }
 
     private void Button_Click_1(object sender, RoutedEventArgs e)
     {
-
     }
   }
 }
