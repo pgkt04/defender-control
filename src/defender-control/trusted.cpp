@@ -79,7 +79,8 @@ namespace trusted
       return false;
     }
 
-    // Not needed?
+    // Optional
+    //
     if (!SetThreadToken(0, hDupToken))
       return false;
 
@@ -248,7 +249,7 @@ namespace trusted
     if (!ConvertSidToStringSidW(token_user->User.Sid, &SID))
       return false;
 
-    // All SID can be found here
+    // All SID can be found here:
     // https://docs.microsoft.com/en-us/troubleshoot/windows-server/identity/security-identifiers-in-windows
     // S-1-5-18	Local System	A service account that is used by the operating system.
     //
