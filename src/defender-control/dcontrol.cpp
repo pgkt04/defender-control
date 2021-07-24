@@ -44,7 +44,8 @@ namespace dcontrol
     auto service = OpenServiceA(
       sc_manager,
       "WinDefend",
-      SERVICE_START | SERVICE_CHANGE_CONFIG | SERVICE_STOP | DELETE
+      enable ? SERVICE_ALL_ACCESS :
+      (SERVICE_CHANGE_CONFIG | SERVICE_STOP | DELETE)
     );
 
     if (!service)
@@ -132,10 +133,10 @@ namespace dcontrol
     if (reg::create_registry(L"SOFTWARE\\Policies\\Microsoft\\Windows Defender", hkey))
     {
       if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 1))
-        std::cout << "failed to write to DisableAntiSpyware" << std::endl;
+        printf("failed to write to DisableAntiSpyware\n");
     }
     else
-      std::cout << "Failed to access Policies-Microsoft-Windows Defender" << std::endl;
+      printf("Failed to access Policies\n");
 
     // SecurityHealth
     //
@@ -144,20 +145,20 @@ namespace dcontrol
       hkey))
     {
       if (!reg::set_keyval_bin(hkey, L"SecurityHealth", 3))
-        std::cout << "failed to write to SecurityHealth" << std::endl;
+        printf("Failed to write to SecurityHealth\n");
     }
     else
-      std::cout << "failed to access CurrentVersion" << std::endl;
+      printf("Failed to access CurrentVersion\n");
 
     // Protected by anti-tamper
     //
     if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender", hkey))
     {
       if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 1))
-        std::cout << "failed to write to DisableAntiSpyware" << std::endl;
+        printf("Failed to write to DisableAntiSpyware");
     }
     else
-      std::cout << "Failed to access Microsoft-Windows Defender" << std::endl;
+      printf("Failed to access Windows Defender\n");
 
     // Protected by anti-tamper
     // Start (3 off) (2 on)
@@ -165,21 +166,20 @@ namespace dcontrol
     if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\WinDefend", hkey))
     {
       if (!reg::set_keyval(hkey, L"Start", 3))
-        std::cout << "failed to write to Start" << std::endl;
+        printf("Failed to write to Start\n");
     }
     else
-      std::cout << "Failed to acccess CurrentControlSet-Services-Windefend" << std::endl;
-
+      printf("Failed to access CurrentControlSet\n");
 
     // Protected by anti-tamper
     //
     if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection", hkey))
     {
       if (!reg::set_keyval(hkey, L"DisableRealtimeMonitoring", 1))
-        std::cout << "failed to disable DisableRealtimeMonitoring" << std::endl;
+        printf("Failed to write to DisableRealTimeMonitoring\n");
     }
     else
-      std::cout << "Failed to access Microsoft-Windows Defender-Real-time Protection" << std::endl;
+      printf("Failed to access Real-Time Protection");
 
     auto helper = new wmic::helper(
       "Root\\Microsoft\\Windows\\Defender",
@@ -235,24 +235,59 @@ namespace dcontrol
   //
   bool enable_defender()
   {
-    manage_windefend(false);
-    kill_smartscreen();
-
     HKEY hkey;
 
-    if (!reg::create_registry(L"SOFTWARE\\Policies\\Microsoft\\Windows Defender", hkey))
-      std::cout << "failed to access Policies" << std::endl;
+    // DisableAntiSpyware
+    if (reg::create_registry(L"SOFTWARE\\Policies\\Microsoft\\Windows Defender", hkey))
+    {
+      if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 0))
+        printf("failed to write to DisableAntiSpyware\n");
+    }
+    else
+      printf("Failed to access Policies\n");
 
-    if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 0))
-      std::cout << "failed to write to DisableAntiSpyware" << std::endl;
-
-    if (!reg::create_registry(
+    // SecurityHealth
+    //
+    if (reg::create_registry(
       L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run",
       hkey))
-      std::cout << "failed to access CurrentVersion" << std::endl;
+    {
+      if (!reg::set_keyval_bin(hkey, L"SecurityHealth", 2))
+        printf("Failed to write to SecurityHealth\n");
+    }
+    else
+      printf("Failed to access CurrentVersion\n");
 
-    if (!reg::set_keyval_bin(hkey, L"SecurityHealth", 2))
-      std::cout << "failed to write to SecurityHealth" << std::endl;
+    // Protected by anti-tamper
+    //
+    if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender", hkey))
+    {
+      if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 0))
+        printf("Failed to write to DisableAntiSpyware");
+    }
+    else
+      printf("Failed to access Windows Defender\n");
+
+    // Protected by anti-tamper
+    // Start (3 off) (2 on)
+    //
+    if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\WinDefend", hkey))
+    {
+      if (!reg::set_keyval(hkey, L"Start", 2))
+        printf("Failed to write to Start\n");
+    }
+    else
+      printf("Failed to access CurrentControlSet\n");
+
+    // Protected by anti-tamper
+    //
+    if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection", hkey))
+    {
+      if (!reg::set_keyval(hkey, L"DisableRealtimeMonitoring", 0))
+        printf("Failed to write to DisableRealTimeMonitoring\n");
+    }
+    else
+      printf("Failed to access Real-Time Protection");
 
     auto helper = new wmic::helper(
       "Root\\Microsoft\\Windows\\Defender",
@@ -288,6 +323,7 @@ namespace dcontrol
     delete helper;
 
     manage_windefend(true);
+
     return true;
   }
 

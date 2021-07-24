@@ -49,9 +49,7 @@ namespace wmic
     bool get(std::string variable, variant_type type, bstr_t& value)
     {
       IEnumWbemClassObject* pEnumerator = NULL;
-
       auto query = "SELECT * FROM " + class_name_s;
-
       auto hres = service_ptr->ExecQuery(
         bstr_t("WQL"),
         bstr_t(query.c_str()),
@@ -92,9 +90,7 @@ namespace wmic
     bool get(std::string variable, variant_type type, T& value)
     {
       IEnumWbemClassObject* pEnumerator = NULL;
-
       auto query = "SELECT * FROM " + class_name_s;
-
       auto hres = service_ptr->ExecQuery(
         bstr_t("WQL"),
         bstr_t(query.c_str()),
@@ -165,7 +161,7 @@ namespace wmic
       if (FAILED(hres))
       {
         last_error = 7;
-        std::cout << "error executing" << std::endl;
+        printf("Error executing\n");
       }
 
       // Cleanup
@@ -220,7 +216,7 @@ namespace wmic
       if (FAILED(hres))
       {
         last_error = 7;
-        std::cout << "error executing" << std::endl;
+        printf("Error executing\n");
       }
 
       // Cleanup
