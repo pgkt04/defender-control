@@ -1,14 +1,20 @@
-﻿<Window x:Class="control_gui.MainWindow"
+﻿<Window x:Name="MainWindow1" x:Class="control_gui.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:control_gui"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
-    <Grid>
-        <Button Content="Enable Defender" HorizontalAlignment="Center" VerticalAlignment="Center" Height="49" Width="236"/>
-        <Button Content="Disable Defender" HorizontalAlignment="Center" VerticalAlignment="Top" Height="49" Width="236" Margin="0,281,0,0" RenderTransformOrigin="0.508,1.276"/>
+        Title="MainWindow" Height="362" Width="412" Initialized="MainWindow1_Initialized">
+    <Grid Margin="0,0,10,-16">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="241*"/>
+            <ColumnDefinition Width="100*"/>
+            <ColumnDefinition Width="82*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="EnableDefender" Content="Enable Defender" HorizontalAlignment="Left" VerticalAlignment="Top" Height="41" Width="145" Margin="138,181,0,0" Click="Button_Click" Grid.ColumnSpan="2"/>
+        <Button x:Name="DisableDefender" Content="Disable Defender" HorizontalAlignment="Left" VerticalAlignment="Top" Height="41" Width="145" Margin="138,244,0,0" RenderTransformOrigin="0.508,1.276" Grid.ColumnSpan="2" Click="Button_Click_1"/>
+        <Image x:Name="Status" HorizontalAlignment="Left" Height="138" Margin="117,27,0,0" VerticalAlignment="Top" Width="198" Grid.ColumnSpan="2"/>
 
     </Grid>
 </Window>

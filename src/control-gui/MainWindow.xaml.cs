@@ -15,14 +15,29 @@ using System.Windows.Shapes;
 
 namespace control_gui
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
-    public partial class MainWindow : Window
+  /// <summary>
+  /// Interaction logic for MainWindow.xaml
+  /// </summary>
+  public partial class MainWindow : Window
+  {
+    public MainWindow()
     {
-        public MainWindow()
-        {
-            InitializeComponent();
-        }
+      InitializeComponent();
     }
+
+    private void MainWindow1_Initialized(object sender, EventArgs e)
+    {
+
+    }
+
+    private void Button_Click(object sender, RoutedEventArgs e)
+    {
+
+    }
+
+    private void Button_Click_1(object sender, RoutedEventArgs e)
+    {
+
+    }
+  }
 }
