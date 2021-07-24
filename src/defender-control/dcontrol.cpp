@@ -123,7 +123,7 @@ namespace dcontrol
     return true;
   }
 
-  // disables window defender
+  // Disables window defender
   //
   bool disable_defender()
   {
