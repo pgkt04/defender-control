@@ -121,6 +121,9 @@ namespace dcontrol
         return false;
       }
 
+      // Allow time for service to stop
+      // TODO: Handle this automatically
+      //
       Sleep(3000);
     }
 
@@ -229,9 +232,6 @@ namespace dcontrol
     helper->execute<uint8_t>("SevereThreatDefaultAction", wmic::variant_type::t_uint8, 6);
     helper->execute<uint8_t>("ScanScheduleDay", wmic::variant_type::t_uint8, 8);
 
-    // Delete smart screen
-    // Disable windefend
-    // Set windefend to DEMAND
 
     delete helper;
 
