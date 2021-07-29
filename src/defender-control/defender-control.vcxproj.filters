@@ -28,6 +28,9 @@
     <Filter Include="Source Files\trusted">
       <UniqueIdentifier>{3a8b4441-6ad3-4aeb-9259-dd027a433699}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gui">
+      <UniqueIdentifier>{3cb323f8-f95e-4d70-aa68-2389412f42ba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -48,6 +51,9 @@
     <ClCompile Include="trusted.cpp">
       <Filter>Source Files\trusted</Filter>
     </ClCompile>
+    <ClCompile Include="gui.cpp">
+      <Filter>Source Files\gui</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dcontrol.hpp">
@@ -67,6 +73,9 @@
     </ClInclude>
     <ClInclude Include="trusted.hpp">
       <Filter>Source Files\trusted</Filter>
+    </ClInclude>
+    <ClInclude Include="gui.hpp">
+      <Filter>Source Files\gui</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
