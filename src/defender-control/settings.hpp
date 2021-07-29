@@ -1,4 +1,9 @@
 #pragma once
 
 #define DBG_MSG (1 << 0)
-#define DISABLE_DEFENDER 1
+
+#define DEFENDER_ENABLE 1
+#define DEFENDER_DISABLE 2
+#define DEFENDER_GUI 3
+
+#define DEFENDER_CONFIG DEFENDER_ENABLE

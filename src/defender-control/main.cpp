@@ -36,17 +36,19 @@ int main(int argc, char** argv)
       "Windows defender is ACTIVE\n" :
       "Windows defender is OFF\n");
 
-#if DISABLE_DEFENDER
+#if DEFENDER_CONFIG == DEFENDER_DISABLE
     if (dcontrol::disable_defender())
       printf("Disabled windows defender!\n");
     else
       printf("Failed to disable defender...\n");
-#else
+#elif DEFENDER_CONFIG == DEFENDER_ENABLE
     if (dcontrol::enable_defender())
       printf("Enabled windows defender!\n");
     else
       printf("Failed to enable defender...\n");
+#elif DEFENDER_CONFIG == DEFENDER_GUI
 #endif
+
   }
   catch (std::exception e)
   {

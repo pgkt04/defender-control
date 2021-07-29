@@ -12,7 +12,7 @@ namespace reg
     DWORD buff_sz = sizeof(DWORD);
 
     // https://docs.microsoft.com/en-us/windows/win32/winprog64/accessing-an-alternate-registry-view
-
+    //
     status = RegOpenKeyExW(
       HKEY_LOCAL_MACHINE,
       root_name,
@@ -24,7 +24,7 @@ namespace reg
     if (status)
     {
       if (flags & DBG_MSG)
-        std::cout << "Error opening " << root_name << " key" << std::endl;
+        wprintf(L"Error opening %ls key \n", root_name);
 
       return -1;
     }
@@ -40,7 +40,7 @@ namespace reg
     if (status)
     {
       if (flags & DBG_MSG)
-        std::cout << "Failed to read " << result << std::endl;
+        wprintf(L"Failed to read %d\n", result);
 
       return -1;
     }
@@ -70,7 +70,7 @@ namespace reg
 
     if (status)
     {
-      std::wcout << "could not find or create " << root_name << " error: " << status << std::endl;
+      wprintf(L"Could not find or create %ls error %d\n", root_name, status);
       return false;
     }
 
@@ -86,7 +86,7 @@ namespace reg
 
     if (ret)
     {
-      std::cout << "set error: " << ret << std::endl;
+      wprintf(L"Set error: %d\n", ret);
       return false;
     }
 
@@ -102,7 +102,7 @@ namespace reg
 
     if (ret)
     {
-      std::cout << "Set error: " << ret << std::endl;
+      wprintf(L"Set error: %d\n", ret);
       return false;
     }
     return true;
