@@ -29,7 +29,17 @@ namespace dcontrol
   {
     auto pid = util::get_pid("smartscreen.exe");
     auto proc = OpenProcess(PROCESS_TERMINATE, FALSE, pid);
+
+    // TODO: Create a better solution to terminate smartscreen
+    // https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminateprocess
+    // The state of global data maintained by dynamic-link libraries 
+    // (DLLs) may be compromised if TerminateProcess is used rather than ExitProcess.
+    // e.g. Injecting code to execute ExitProcess
+    //
     TerminateProcess(proc, 0);
+
+    if (proc)
+      CloseHandle(proc);
   }
 
   // Stop or run the windefend service
