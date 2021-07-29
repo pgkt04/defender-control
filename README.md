@@ -1,6 +1,7 @@
 # Defender Control
 Open source windows defender disabler.   
 Now you can disable windows defender permanently!   
+Tested & working on Windows 10 Version 20H2.  
 
 ## What is this project?  
 We all know that disabling windefender is very difficult since microsoft is constantly enforcing changes.  
