@@ -121,9 +121,6 @@ namespace dcontrol
         return false;
       }
 
-      // Allow time for service to stop
-      // TODO: Handle this automatically
-      //
       Sleep(3000);
     }
 
