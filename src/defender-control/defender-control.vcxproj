@@ -135,6 +135,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -147,6 +148,7 @@
   <ItemGroup>
     <ClCompile Include="dcontrol.cpp" />
     <ClCompile Include="gui.cpp" />
+    <ClCompile Include="gui_dx11.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="reg.cpp" />
     <ClCompile Include="trusted.cpp" />
@@ -156,6 +158,7 @@
   <ItemGroup>
     <ClInclude Include="dcontrol.hpp" />
     <ClInclude Include="gui.hpp" />
+    <ClInclude Include="gui_dx11.hpp" />
     <ClInclude Include="settings.hpp" />
     <ClInclude Include="reg.hpp" />
     <ClInclude Include="trusted.hpp" />

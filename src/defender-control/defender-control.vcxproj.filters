@@ -31,6 +31,9 @@
     <Filter Include="Source Files\gui">
       <UniqueIdentifier>{3cb323f8-f95e-4d70-aa68-2389412f42ba}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gui\dx11">
+      <UniqueIdentifier>{702c3537-8c29-4a8c-95c8-496fbeb35fb8}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -54,6 +57,9 @@
     <ClCompile Include="gui.cpp">
       <Filter>Source Files\gui</Filter>
     </ClCompile>
+    <ClCompile Include="gui_dx11.cpp">
+      <Filter>Source Files\gui\dx11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="dcontrol.hpp">
@@ -76,6 +82,9 @@
     </ClInclude>
     <ClInclude Include="gui.hpp">
       <Filter>Source Files\gui</Filter>
+    </ClInclude>
+    <ClInclude Include="gui_dx11.hpp">
+      <Filter>Source Files\gui\dx11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
