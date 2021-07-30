@@ -103,7 +103,9 @@ namespace dcontrol
         if (last_error == ERROR_SERVICE_NOT_ACTIVE)
           return true;
 
-        throw std::runtime_error("Failed to stop windefend service " + std::to_string(last_error));
+        throw std::runtime_error(
+          "Failed to stop windefend service " + std::to_string(last_error)
+        );
         return false;
       }
 
@@ -117,7 +119,10 @@ namespace dcontrol
         0, 0, 0, 0, 0, 0, 0
       ))
       {
-        throw std::runtime_error("Failed to modify windefend service" + std::to_string(GetLastError()));
+        throw std::runtime_error(
+          "Failed to modify windefend service" + std::to_string(GetLastError())
+        );
+
         return false;
       }
 
@@ -232,7 +237,6 @@ namespace dcontrol
     helper->execute<uint8_t>("SevereThreatDefaultAction", wmic::variant_type::t_uint8, 6);
     helper->execute<uint8_t>("ScanScheduleDay", wmic::variant_type::t_uint8, 8);
 
-
     delete helper;
 
     return true;
@@ -313,19 +317,23 @@ namespace dcontrol
     helper->execute("EnableControlledFolderAccess", "Enabled");
     helper->execute("PUAProtection", "enable");
 
+    auto helper_disable = [](wmic::helper* h, const char* name) {
+      h->execute<BOOL>(name, wmic::variant_type::t_bool, FALSE);
+    };
+
     // bool types
     //
-    helper->execute<BOOL>("DisableRealtimeMonitoring", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("DisableBehaviorMonitoring", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("DisableBlockAtFirstSeen", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("DisableIOAVProtection", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("DisablePrivacyMode", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("SignatureDisableUpdateOnStartupWithoutEngine", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("DisableArchiveScanning", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("DisableIntrusionPreventionSystem", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("DisableScriptScanning", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("DisableAntiSpyware", wmic::variant_type::t_bool, FALSE);
-    helper->execute<BOOL>("DisableAntiVirus", wmic::variant_type::t_bool, FALSE);
+    helper_disable(helper, "DisableRealtimeMonitoring");
+    helper_disable(helper, "DisableBehaviorMonitoring");
+    helper_disable(helper, "DisableBlockAtFirstSeen");
+    helper_disable(helper, "DisableIOAVProtection");
+    helper_disable(helper, "DisablePrivacyMode");
+    helper_disable(helper, "SignatureDisableUpdateOnStartupWithoutEngine");
+    helper_disable(helper, "DisableArchiveScanning");
+    helper_disable(helper, "DisableIntrusionPreventionSystem");
+    helper_disable(helper, "DisableScriptScanning");
+    helper_disable(helper, "DisableAntiSpyware");
+    helper_disable(helper, "DisableAntiVirus");
 
     delete helper;
 
