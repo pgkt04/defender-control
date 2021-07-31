@@ -312,7 +312,7 @@ namespace dcontrol
       return false;
     }
 
-    // string types
+    // BSTR types
     //
     helper->execute("EnableControlledFolderAccess", "Enabled");
     helper->execute("PUAProtection", "enable");
@@ -321,7 +321,7 @@ namespace dcontrol
       h->execute<BOOL>(name, wmic::variant_type::t_bool, FALSE);
     };
 
-    // bool types
+    // BOOL types
     //
     helper_disable(helper, "DisableRealtimeMonitoring");
     helper_disable(helper, "DisableBehaviorMonitoring");
@@ -335,6 +335,8 @@ namespace dcontrol
     helper_disable(helper, "DisableAntiSpyware");
     helper_disable(helper, "DisableAntiVirus");
 
+    // Cleanup
+    //
     delete helper;
 
     manage_windefend(true);
