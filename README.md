@@ -33,3 +33,4 @@ If you are interested in how I developed this program check out the writeup [her
 
 ## TO-DO
 - Build an interface
+- Test on Windows 11
