@@ -16,7 +16,7 @@ I like open source, so I made a safe to use open source defender control.
 4. It will disable all relevant registries + wmi settings
 
 ## Is it safe?
-Yes it is safe, feel free to review the code in the repository yourself.
+Yes it is safe, feel free to review the code in the repository yourself.  
 Anti-virus & other programs might flag this as malicious since it disables defender - but feel free to compile it using visual studio.
 
 ## Demo
