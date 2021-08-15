@@ -35,7 +35,7 @@ namespace dcontrol
     // The state of global data maintained by dynamic-link libraries 
     // (DLLs) may be compromised if TerminateProcess is used rather than ExitProcess.
     // e.g. Injecting code to execute ExitProcess
-    //
+
     TerminateProcess(proc, 0);
 
     if (proc)
@@ -66,11 +66,10 @@ namespace dcontrol
 
     // TODO: Add a better implementation
     // https://docs.microsoft.com/en-us/windows/win32/services/starting-a-service
-    //
+
     if (enable)
     {
       // Change to auto-start
-      //
       if (!ChangeServiceConfigA(
         service,
         SERVICE_NO_CHANGE,
@@ -84,7 +83,6 @@ namespace dcontrol
       }
 
       // Start the service
-      //
       if (!StartServiceA(service, 0, NULL))
       {
         throw std::runtime_error("Failed to start service");
@@ -94,7 +92,6 @@ namespace dcontrol
     else
     {
       // Stop the service
-      //
       SERVICE_STATUS scStatus;
       if (!ControlService(service, SERVICE_CONTROL_STOP, &scStatus))
       {
@@ -110,7 +107,6 @@ namespace dcontrol
       }
 
       // Change to DEMAND
-      //
       if (!ChangeServiceConfigA(
         service,
         SERVICE_NO_CHANGE,
@@ -128,7 +124,6 @@ namespace dcontrol
 
       // Allow time for service to stop
       // TODO: Handle this automatically
-      //
       Sleep(3000);
     }
 
@@ -154,7 +149,6 @@ namespace dcontrol
       printf("Failed to access Policies\n");
 
     // SecurityHealth
-    //
     if (reg::create_registry(
       L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run",
       hkey))
@@ -166,7 +160,6 @@ namespace dcontrol
       printf("Failed to access CurrentVersion\n");
 
     // Protected by anti-tamper
-    //
     if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender", hkey))
     {
       if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 1))
@@ -177,7 +170,6 @@ namespace dcontrol
 
     // Protected by anti-tamper
     // Start (3 off) (2 on)
-    //
     if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\WinDefend", hkey))
     {
       if (!reg::set_keyval(hkey, L"Start", 3))
@@ -187,7 +179,6 @@ namespace dcontrol
       printf("Failed to access CurrentControlSet\n");
 
     // Protected by anti-tamper
-    //
     if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection", hkey))
     {
       if (!reg::set_keyval(hkey, L"DisableRealtimeMonitoring", 1))
@@ -209,12 +200,10 @@ namespace dcontrol
     }
 
     // string types
-    //
     helper->execute("EnableControlledFolderAccess", "Disabled");
     helper->execute("PUAProtection", "disable");
 
     // bool types
-    //
     helper->execute<BOOL>("DisableRealtimeMonitoring", wmic::variant_type::t_bool, TRUE);
     helper->execute<BOOL>("DisableBehaviorMonitoring", wmic::variant_type::t_bool, TRUE);
     helper->execute<BOOL>("DisableBlockAtFirstSeen", wmic::variant_type::t_bool, TRUE);
@@ -228,7 +217,6 @@ namespace dcontrol
     helper->execute<BOOL>("DisableAntiVirus", wmic::variant_type::t_bool, TRUE);
 
     // values
-    //
     helper->execute<uint8_t>("SubmitSamplesConsent", wmic::variant_type::t_uint8, 2);
     helper->execute<uint8_t>("MAPSReporting", wmic::variant_type::t_uint8, 0);
     helper->execute<uint8_t>("HighThreatDefaultAction", wmic::variant_type::t_uint8, 6);
@@ -243,13 +231,11 @@ namespace dcontrol
   }
 
   // Enables defender, assumes we have TrustedInstaller permissions
-  //
   bool enable_defender()
   {
     HKEY hkey;
 
     // DisableAntiSpyware
-    //
     if (reg::create_registry(L"SOFTWARE\\Policies\\Microsoft\\Windows Defender", hkey))
     {
       if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 0))
@@ -259,7 +245,6 @@ namespace dcontrol
       printf("Failed to access Policies\n");
 
     // SecurityHealth
-    //
     if (reg::create_registry(
       L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run",
       hkey))
@@ -271,7 +256,6 @@ namespace dcontrol
       printf("Failed to access CurrentVersion\n");
 
     // Protected by anti-tamper
-    //
     if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender", hkey))
     {
       if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 0))
@@ -282,7 +266,6 @@ namespace dcontrol
 
     // Protected by anti-tamper
     // Start (3 off) (2 on)
-    //
     if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\WinDefend", hkey))
     {
       if (!reg::set_keyval(hkey, L"Start", 2))
@@ -292,7 +275,6 @@ namespace dcontrol
       printf("Failed to access CurrentControlSet\n");
 
     // Protected by anti-tamper
-    //
     if (reg::create_registry(L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection", hkey))
     {
       if (!reg::set_keyval(hkey, L"DisableRealtimeMonitoring", 0))
@@ -314,7 +296,6 @@ namespace dcontrol
     }
 
     // BSTR types
-    //
     helper->execute("EnableControlledFolderAccess", "Enabled");
     helper->execute("PUAProtection", "enable");
 
@@ -323,7 +304,6 @@ namespace dcontrol
     };
 
     // BOOL types
-    //
     helper_disable(helper, "DisableRealtimeMonitoring");
     helper_disable(helper, "DisableBehaviorMonitoring");
     helper_disable(helper, "DisableBlockAtFirstSeen");
@@ -337,7 +317,6 @@ namespace dcontrol
     helper_disable(helper, "DisableAntiVirus");
 
     // Cleanup
-    //
     delete helper;
 
     manage_windefend(true);
@@ -349,6 +328,7 @@ namespace dcontrol
   //
   bool check_defender(uint32_t flags)
   {
+    // Unreliable method if anti-tamper is enabled.
     //return REG::read_key(
     //  L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection",
     //  L"DisableRealtimeMonitoring") == 0;
@@ -362,7 +342,6 @@ namespace dcontrol
     if (auto error = helper->get_last_error())
     {
       // Throw error instead
-      //
       printf("Error has occured: %d\n", error);
       delete helper;
       return true;

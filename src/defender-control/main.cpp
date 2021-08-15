@@ -16,7 +16,6 @@ int main(int argc, char** argv)
 
   // Because we are a primary token, we can't swap ourselves with an impersonation token.
   // There will always be a need to re-create the process with the token as primary.
-  //
   if (!trusted::is_system_group() && argc == 1)
   {
     printf("Restarting with privileges\n");
@@ -26,8 +25,6 @@ int main(int argc, char** argv)
 
   try
   {
-    // Disable smart screen, defender & tamper protection
-    //
     dcontrol::kill_smartscreen();
     dcontrol::manage_windefend(false);
     dcontrol::toggle_tamper(false);
