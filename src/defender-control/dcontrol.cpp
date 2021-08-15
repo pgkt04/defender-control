@@ -249,6 +249,7 @@ namespace dcontrol
     HKEY hkey;
 
     // DisableAntiSpyware
+    //
     if (reg::create_registry(L"SOFTWARE\\Policies\\Microsoft\\Windows Defender", hkey))
     {
       if (!reg::set_keyval(hkey, L"DisableAntiSpyware", 0))
