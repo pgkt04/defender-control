@@ -1,5 +1,7 @@
 #include "gui_dx11.hpp"
 
+// https://github.com/ocornut/imgui/blob/master/examples/example_win32_directx11/main.cpp
+
 namespace gui::dx11
 {
   static ID3D11Device* g_device = NULL;
