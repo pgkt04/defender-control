@@ -86,7 +86,7 @@ namespace reg
 
     if (ret)
     {
-      wprintf(L"Set error: %d\n", ret);
+      // wprintf(L"Set error: %d\n", ret);
       return false;
     }
 
@@ -102,7 +102,7 @@ namespace reg
 
     if (ret)
     {
-      wprintf(L"Set error: %d\n", ret);
+      // wprintf(L"Set error: %d\n", ret);
       return false;
     }
     return true;

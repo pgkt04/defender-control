@@ -172,8 +172,7 @@ namespace dcontrol
     // Start (3 off) (2 on)
     if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\WinDefend", hkey))
     {
-      if (!reg::set_keyval(hkey, L"Start", 3))
-        printf("Failed to write to Start\n");
+      reg::set_keyval(hkey, L"Start", 3);
     }
     else
       printf("Failed to access CurrentControlSet\n");
@@ -268,8 +267,7 @@ namespace dcontrol
     // Start (3 off) (2 on)
     if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\WinDefend", hkey))
     {
-      if (!reg::set_keyval(hkey, L"Start", 2))
-        printf("Failed to write to Start\n");
+      reg::set_keyval(hkey, L"Start", 2);
     }
     else
       printf("Failed to access CurrentControlSet\n");
