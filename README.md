@@ -32,4 +32,5 @@ If you are interested in how I developed this program check out the writeup [her
 
 ## TO-DO
 - [ ] Update to the latest win11
+- [ ] Better cli support 
 - [ ] Build an interface
