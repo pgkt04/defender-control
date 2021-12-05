@@ -529,6 +529,7 @@ void thread_main()
 
   // native hooks
   // 
+#if 0
   RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;
   DetourHelper::perf_hook((PVOID*)&RegHooks::enable_def_help_addr, RegHooks::hk_enable_def);
 
@@ -558,6 +559,7 @@ void thread_main()
 
   RegHooks::execute_shell_stuff_addr = (uintptr_t)GetModuleHandleA(0) + 0x33FA4;
   DetourHelper::perf_hook((PVOID*)&RegHooks::execute_shell_stuff_addr, RegHooks::hk_execute_shell_stuff);
+#endif
 }
 
 BOOL APIENTRY DllMain(HMODULE hModule,
