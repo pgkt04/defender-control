@@ -365,82 +365,721 @@ Well. We can once we disable tamper protection... But to do that without going t
 
 ### Windows 11
 
-Manual analysis:
+New dump:
 
 ```asm
-RegSetValueExW
-008CE3F4  04243990  L"Start"
-008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdFilter"
+obtained RegDeleteKeyW from 75DD0000
+obtained RegDeleteValueW from 75DD0000
+obtained RegEnumValueW from 75DD0000
+obtained RegSetValueExW from 75DD0000
+obtained RegCreateKeyExW from 75DD0000
+obtained RegConnectRegistryW from 75DD0000
+obtained RegEnumKeyExW from 75DD0000
+obtained RegQueryValueExW from 75DD0000
+obtained RegOpenKeyExW from 75DD0000
+obtained CreateProcessW from 76000000
+obtained ShellExecuteExW from 76DE0000
+imports resolved
+preparing to hook
 
-008CE3F4  04243990  L"Start"
-008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdNisDrv"
-
-008CE714  04210338  L"DisableAntiSpyware"
-008CE778  033C4F88  L"SOFTWARE\\Policies\\Microsoft\\Windows Defender"
-
-008CE714  0420FFB8  L"DisableAntiVirus"
-008CE778  033C4F88  L"SOFTWARE\\Policies\\Microsoft\\Windows Defender"
-
-008CE624  04210958  L"DisableAntiSpyware"
-008CE688  033BBE18  L"SOFTWARE\\Microsoft\\Windows Defender"
-
-008CE714  0420D138  L"DisableRealtimeMonitoring"
-008CE778  04116218  L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection"
-
-008CEA54  04242F10  L"Start"
-008CEAB8  033C50C0  L"SYSTEM\\CurrentControlSet\\Services\\WinDefend"
-
-008CE3F4  04243990  L"Start"
-008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdFilter"
-
-008CE3F4  04243990  L"Start"
-008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdNisDrv"
-
-008CE3F4  04243990  L"Start"
-008CE458  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WdNisSvc"
-
-008CE7F4  04243990  L"Start"
-008CE858  033C4F88  L"SYSTEM\\CurrentControlSet\\Services\\WinDefend"
-
-008CE8A4  04210338  L"DisableAntiSpyware"
-008CE908  033C4F88  L"SOFTWARE\\Policies\\Microsoft\\Windows Defender"
-
-008CE8A4  04210338  L"DisableAntiSpyware"
-008CE908  033C4F88  L"SOFTWARE\\Policies\\Microsoft\\Windows Defender"
-
-008CE7B4  04210958  L"DisableAntiSpyware"
-008CE818  033BBD68  L"SOFTWARE\\Microsoft\\Windows Defender"
-
-008CECA4  04210728  L"DisableAntiVirus"
-008CED08  033BBFD0  L"SOFTWARE\\Microsoft\\Windows Defender"
-
-008CE8A4  0420D138  L"DisableRealtimeMonitoring"
-008CE908  04115E60  L"SOFTWARE\\Microsoft\\Windows Defender\\Real-Time Protection"
-
-008CED94  04237F40  L"SecurityHealth"
-008CEDF8  033E9418  L"SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Explorer\\StartupApproved\\Run"
-
-008CE88C  042499B8  L"Debugger"
-008CE898  042AC900  L"C:\\Windows\\System32\\systray.exe"
-008CE8F0  0421D500  L"SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\mpcmdrun.exe"
+IDLE:
 
 
-008CE784  04249B08  L"Debugger"
-008CE790  042AC900  L"C:\\Windows\\System32\\systray.exe"
-008CE7E8  0424D028  L"SOFTWARE\\Wow6432Node\\Microsoft\\Windows NT\\CurrentVersion\\Image File Execution Options\\mpcmdrun.exe"
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Exclusions\Paths
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
 
-008CE7F4  04243990  L"Start"
-008CE858  033C4700  L"SYSTEM\\CurrentControlSet\\Services\\WinDefend"
+
+
+---
+
+
+[RegQueryValueExW]
+lpValueName: C:\Program Files (x86)\DefenderControl\dControl.exe
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdFilter
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdNisDrv
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdNisSvc
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Policies\Microsoft\Windows Defender
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE754
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableAntiSpyware
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Policies\Microsoft\Windows Defender
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE754
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableAntiVirus
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Microsoft\Windows Defender
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE664
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableAntiSpyware
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Microsoft\Windows Defender
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CEB54
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableAntiVirus
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE754
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableRealtimeMonitoring
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WinDefend
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CEA94
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdFilter
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdNisDrv
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdNisSvc
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WinDefend
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE834
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Policies\Microsoft\Windows Defender
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE8E4
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableAntiSpyware
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Policies\Microsoft\Windows Defender
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE8E4
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableAntiVirus
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Microsoft\Windows Defender
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE7F4
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableAntiSpyware
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Microsoft\Windows Defender
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CECE4
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableAntiVirus
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE8E4
+Ret: 0
+[RegSetValueExW]
+lpValueName: DisableRealtimeMonitoring
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: SecurityHealth
+[RegQueryValueExW]
+lpValueName: SecurityHealth
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CEDD4
+Ret: 0
+[RegSetValueExW]
+lpValueName: SecurityHealth
+Reserved: 0
+dwType: 3
+cbData: 12
+Ret: 0
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegEnumValueW]
+lpValueName:→0‼rityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: Riot Vanguard
+[RegQueryValueExW]
+lpValueName: Riot Vanguard
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegEnumValueW]
+lpValueName:→0‼ Vanguard
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\mpcmdrun.exe
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE8CC
+Ret: 0
+[RegSetValueExW]
+lpValueName: Debugger
+Reserved: 0
+dwType: 1
+cbData: 64
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\mpcmdrun.exe
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE7C4
+Ret: 0
+[RegSetValueExW]
+lpValueName: Debugger
+Reserved: 0
+dwType: 1
+cbData: 64
+Ret: 0
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\mpcmdrun.exe
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: Debugger
+[RegQueryValueExW]
+lpValueName: Debugger
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WinDefend
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE834
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+
+
+---
+
+ENABLE:
+
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdFilter
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdNisDrv
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdNisSvc
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
+ulOptions: 0
+samDesired: 131103
+[RegEnumKeyExW]
+lpName: ì☻♦
+[RegOpenKeyExW]
+lpValueName: Policy Manager
+ulOptions: 0
+samDesired: 131097
+[RegEnumKeyExW]
+lpName: ═☻♦
+[RegEnumKeyExW]
+lpName: Policy Manager
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
+ulOptions: 0
+samDesired: 131359
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+ulOptions: 0
+samDesired: 131359
+[RegDeleteValueW]
+lpValueNameDisableAntiSpyware
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+ulOptions: 0
+samDesired: 131359
+[RegDeleteValueW]
+lpValueNameDisableAntiVirus
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+ulOptions: 0
+samDesired: 131359
+[RegDeleteValueW]
+lpValueNameDisableRealtimeMonitoring
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+ulOptions: 0
+samDesired: 131359
+[RegDeleteValueW]
+lpValueNameDisableAntiSpywareRealtimeProtection
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: DisableAntiSpyware
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WinDefend
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE834
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdFilter
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 0
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdNisDrv
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 5
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WdNisSvc
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE434
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 5
+[RegCreateKeyExW]
+hKey: 80000002
+lpSubKey: SYSTEM\CurrentControlSet\Services\WinDefend
+lpClass:
+samDesired: 131334
+Reserved: 0
+lpSecurityAttributes: 00000000
+dwOptions: 0
+lpdwDisposition: 008CE834
+Ret: 0
+[RegSetValueExW]
+lpValueName: Start
+Reserved: 0
+dwType: 4
+cbData: 4
+Ret: 5
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Policies\Microsoft\Windows Defender
+ulOptions: 0
+samDesired: 131103
+[RegEnumKeyExW]
+lpName: ]☻♦
+lpValueName: DisableAntiSpyware
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: DisableRealtimeMonitoring
+[CreateProcessW]
+lpCommandLine: "C:\j\bin\dControl\w11 fix\dfControl.exe" /EXP |6324|
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegEnumValueW]
+lpValueName: h.°$♀
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: SecurityHealth
+[RegQueryValueExW]
+lpValueName: SecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartupApproved\Run
+ulOptions: 0
+samDesired: 131359
+[RegDeleteValueW]
+lpValueNameSecurityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegEnumValueW]
+lpValueName: h.°$rityHealth
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegQueryValueExW]
+lpValueName: Riot Vanguard
+[RegQueryValueExW]
+lpValueName: Riot Vanguard
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows\CurrentVersion\Run
+ulOptions: 0
+samDesired: 131353
+[RegEnumValueW]
+lpValueName: h.°$ Vanguard
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\mpcmdrun.exe
+ulOptions: 0
+samDesired: 131359
+[RegEnumKeyExW]
+lpName: ♣☻♦
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Wow6432Node\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\mpcmdrun.exe
+ulOptions: 0
+samDesired: 131359
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows NT\CurrentVersion\Image File Execution Options\mpcmdrun.exe
+ulOptions: 0
+samDesired: 131353
+[CreateProcessW]
+lpCommandLine: C:\Program Files\Windows Defender\mpcmdrun.exe -wdenable
+[RegOpenKeyExW]
+lpValueName: SOFTWARE\Microsoft\Windows Defender\Real-Time Protection
+ulOptions: 0
+samDesired: 131353
+
 ```
-
-
-
-
-
-
-
-
-
 
 
 
