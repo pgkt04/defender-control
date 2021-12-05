@@ -365,6 +365,8 @@ Well. We can once we disable tamper protection... But to do that without going t
 
 ### Windows 11
 
+Manual analysis:
+
 ```asm
 RegSetValueExW
 008CE3F4  04243990  L"Start"
