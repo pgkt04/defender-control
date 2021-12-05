@@ -31,6 +31,6 @@ Or alternatively click [here](https://github.com/qtkite/defender-control/release
 If you are interested in how I developed this program check out the writeup [here](https://github.com/qtkite/defender-control/blob/main/Writeup.md).
 
 ## TO-DO
-- [ ] Update to the latest win11
+- [ ] Confirm win 11 support
 - [ ] Better cli support 
 - [ ] Build an interface
