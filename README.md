@@ -20,6 +20,12 @@ I like open source, so I made a safe to use open source defender control.
 Yes it is safe, feel free to review the code in the repository yourself.  
 Anti-virus & other programs might flag this as malicious since it disables defender - but feel free to compile it using visual studio.
 
+## Compiling
+Open the project using visual studio 2022 preview.
+Set the build to Release and x64.
+Change the build type you want in settings.hpp.
+Compile.
+
 ## Demo
 ![Demo](https://github.com/qtkite/defender-control/blob/main/resources/demo.gif?raw=true)
 
