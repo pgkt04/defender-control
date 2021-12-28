@@ -31,7 +31,7 @@ Compile.
 
 ## Release
 You can find the first release over at the releases on the right.  
-Or alternatively click [here](https://github.com/qtkite/defender-control/releases/tag/v1.1).
+Or alternatively click [here](https://github.com/qtkite/defender-control/releases/tag/v1.2).
 
 ## Writeup
 If you are interested in how I developed this program check out the writeup [here](https://github.com/qtkite/defender-control/blob/main/Writeup.md).
