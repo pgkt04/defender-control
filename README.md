@@ -38,5 +38,6 @@ If you are interested in how I developed this program check out the writeup [her
 
 ## TO-DO
 - [ ] Confirm win 11 support
+- [ ] Disable security support
 - [ ] Better cli support 
 - [ ] Build an interface
