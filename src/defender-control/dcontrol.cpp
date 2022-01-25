@@ -34,7 +34,7 @@ namespace dcontrol
     // https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-terminateprocess
     // The state of global data maintained by dynamic-link libraries 
     // (DLLs) may be compromised if TerminateProcess is used rather than ExitProcess.
-    // e.g. Injecting code to execute ExitProcess
+    // e.g. Injecting code to execute ExitProcess and manually unloaded everything 
 
     TerminateProcess(proc, 0);
 
@@ -275,9 +275,7 @@ namespace dcontrol
     // Protected by anti-tamper
     // Start (3 off) (2 on)
     if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\WinDefend", hkey))
-    {
       reg::set_keyval(hkey, L"Start", 2);
-    }
     else
       printf("Failed to access CurrentControlSet\n");
 
