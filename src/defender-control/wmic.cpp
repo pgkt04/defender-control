@@ -140,6 +140,4 @@ namespace wmic
   {
     return last_error;
   }
-
-
 }

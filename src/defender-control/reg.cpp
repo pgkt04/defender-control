@@ -12,7 +12,6 @@ namespace reg
     DWORD buff_sz = sizeof(DWORD);
 
     // https://docs.microsoft.com/en-us/windows/win32/winprog64/accessing-an-alternate-registry-view
-    //
     status = RegOpenKeyExW(
       HKEY_LOCAL_MACHINE,
       root_name,
@@ -25,7 +24,6 @@ namespace reg
     {
       if (flags & DBG_MSG)
         wprintf(L"Error opening %ls key \n", root_name);
-
       return -1;
     }
 

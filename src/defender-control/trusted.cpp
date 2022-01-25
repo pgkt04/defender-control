@@ -283,5 +283,4 @@ namespace trusted
 
     return ret;
   }
-
 }
