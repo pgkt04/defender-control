@@ -138,6 +138,8 @@ namespace dcontrol
     // https://web.archive.org/web/20110514163940/http://support.microsoft.com/kb/103000
     //
 
+    // auto ret = manage_security_service(enable, "wscsvc");
+
     HKEY hkey;
     if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\wscsvc", hkey))
     {
@@ -151,7 +153,7 @@ namespace dcontrol
       }
       else
       {
-        if (!reg::set_keyval(hkey, L"Start", 3)) // Manual (On Demand)
+        if (!reg::set_keyval(hkey, L"Start", 4)) // Disabled
         {
           printf("failed to write to wscsvc\n");
           return false;
@@ -159,7 +161,7 @@ namespace dcontrol
       }
     }
 
-    return manage_security_service(enable, "wscsvc");
+    return true;
   }
 
   // Stop or run the windefend service

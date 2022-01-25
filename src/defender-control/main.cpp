@@ -45,7 +45,6 @@ int main(int argc, char** argv)
   {
     dcontrol::kill_smartscreen();
     dcontrol::manage_windefend(false);
-    dcontrol::manage_security_center(false);
     dcontrol::toggle_tamper(false);
 
     printf(dcontrol::check_defender() ?
@@ -54,7 +53,10 @@ int main(int argc, char** argv)
 
 #if DEFENDER_CONFIG == DEFENDER_DISABLE
     if (dcontrol::disable_defender())
+    {
+      dcontrol::manage_security_center(false);
       printf("Disabled windows defender!\n");
+    }
     else
       printf("Failed to disable defender...\n");
 #elif DEFENDER_CONFIG == DEFENDER_ENABLE
@@ -64,6 +66,8 @@ int main(int argc, char** argv)
       printf("Failed to enable defender...\n");
 #elif DEFENDER_CONFIG == DEFENDER_GUI
 #endif
+
+
 
   }
   catch (std::exception e)
