@@ -37,7 +37,7 @@ Or alternatively click [here](https://github.com/qtkite/defender-control/release
 If you are interested in how I developed this program check out the writeup [here](https://github.com/qtkite/defender-control/blob/main/Writeup.md).
 
 ## TO-DO
+- [x] Disable security center
 - [ ] Confirm win 11 support
-- [ ] Disable security center
 - [ ] Better cli support 
 - [ ] Build an interface
