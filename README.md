@@ -38,6 +38,7 @@ If you are interested in how I developed this program check out the writeup [her
 
 ## TO-DO
 - [x] Disable security center
+- [x] Add silent mode
 - [ ] Confirm win 11 support
 - [ ] Better cli support 
 - [ ] Build an interface
