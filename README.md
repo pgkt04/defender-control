@@ -2,7 +2,7 @@
 Open source windows defender disabler.   
 Now you can disable windows defender permanently!   
 Tested from Windows 10 20H2.  
-Also working on Windows 11 (earlier versions)
+Also working on Windows 11 
 
 ## What is this project?  
 We all know that disabling windefender is very difficult since microsoft is constantly enforcing changes.  
@@ -39,6 +39,6 @@ If you are interested in how I developed this program check out the writeup [her
 ## TO-DO
 - [x] Disable security center
 - [x] Add silent mode
-- [ ] Confirm win 11 support
+- [x] Confirm win 11 support
 - [ ] Better cli support 
 - [ ] Build an interface
