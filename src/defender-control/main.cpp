@@ -27,6 +27,7 @@ int main(int argc, char** argv)
   {
     dcontrol::kill_smartscreen();
     dcontrol::manage_windefend(false);
+    dcontrol::manage_security_center(false);
     dcontrol::toggle_tamper(false);
 
     printf(dcontrol::check_defender() ?

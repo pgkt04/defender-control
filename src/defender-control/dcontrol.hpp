@@ -31,4 +31,8 @@ namespace dcontrol
   // Stop or run the windefend service
   //
   bool manage_windefend(bool enable);
+
+  // Stop or run the security center
+  //
+  bool manage_security_center(bool enable);
 }

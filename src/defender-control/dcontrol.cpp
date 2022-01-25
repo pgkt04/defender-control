@@ -42,9 +42,9 @@ namespace dcontrol
       CloseHandle(proc);
   }
 
-  // Stop or run the windefend service
-  //
-  bool manage_windefend(bool enable)
+  // TODO: create a single function
+
+  bool manage_security_service(bool enable, std::string service_name)
   {
     auto sc_manager = OpenSCManagerA(0, 0, SC_MANAGER_CONNECT);
 
@@ -53,7 +53,7 @@ namespace dcontrol
 
     auto service = OpenServiceA(
       sc_manager,
-      "WinDefend",
+      service_name.c_str(),
       enable ? SERVICE_ALL_ACCESS :
       (SERVICE_CHANGE_CONFIG | SERVICE_STOP | DELETE)
     );
@@ -63,9 +63,6 @@ namespace dcontrol
       CloseServiceHandle(sc_manager);
       return false;
     }
-
-    // TODO: Add a better implementation
-    // https://docs.microsoft.com/en-us/windows/win32/services/starting-a-service
 
     if (enable)
     {
@@ -78,14 +75,14 @@ namespace dcontrol
         0, 0, 0, 0, 0, 0, 0
       ))
       {
-        throw std::runtime_error("Failed to modify windefend service" + std::to_string(GetLastError()));
+        throw std::runtime_error("Failed to modify " + service_name + " " + std::to_string(GetLastError()));
         return false;
       }
 
       // Start the service
       if (!StartServiceA(service, 0, NULL))
       {
-        throw std::runtime_error("Failed to start service");
+        throw std::runtime_error("Failed to start " + service_name);
         return false;
       }
     }
@@ -101,7 +98,7 @@ namespace dcontrol
           return true;
 
         throw std::runtime_error(
-          "Failed to stop windefend service " + std::to_string(last_error)
+          "Failed to stop " + service_name + " " + std::to_string(last_error)
         );
         return false;
       }
@@ -116,7 +113,7 @@ namespace dcontrol
       ))
       {
         throw std::runtime_error(
-          "Failed to modify windefend service" + std::to_string(GetLastError())
+          "Failed to modify " + service_name + " " + std::to_string(GetLastError())
         );
 
         return false;
@@ -127,10 +124,22 @@ namespace dcontrol
       Sleep(3000);
     }
 
-    CloseServiceHandle(service);
-    CloseServiceHandle(sc_manager);
-
     return true;
+  }
+
+  // Stop or run security center (wscvc)
+  // The default value is autostart
+  //
+  bool manage_security_center(bool enable)
+  {
+    return manage_security_service(enable, "wscsvc");
+  }
+
+  // Stop or run the windefend service
+  //
+  bool manage_windefend(bool enable)
+  {
+    return manage_security_service(enable, "WinDefend");
   }
 
   // Disables window defender
@@ -318,6 +327,7 @@ namespace dcontrol
     delete helper;
 
     manage_windefend(true);
+    manage_security_center(true);
 
     return true;
   }
