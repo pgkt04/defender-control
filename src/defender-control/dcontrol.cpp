@@ -132,6 +132,33 @@ namespace dcontrol
   //
   bool manage_security_center(bool enable)
   {
+    // handle registry calls
+    // https://superuser.com/questions/1199112/how-to-tell-the-state-of-a-service-from-the-registry
+    // https://stackoverflow.com/questions/291519/how-does-currentcontrolset-differ-from-controlset001-and-controlset002
+    // https://web.archive.org/web/20110514163940/http://support.microsoft.com/kb/103000
+    //
+
+    HKEY hkey;
+    if (reg::create_registry(L"SYSTEM\\CurrentControlSet\\Services\\wscsvc", hkey))
+    {
+      if (enable)
+      {
+        if (!reg::set_keyval(hkey, L"Start", 2)) // Automatic
+        {
+          printf("failed to write to wscsvc\n");
+          return false;
+        }
+      }
+      else
+      {
+        if (!reg::set_keyval(hkey, L"Start", 3)) // Manual (On Demand)
+        {
+          printf("failed to write to wscsvc\n");
+          return false;
+        }
+      }
+    }
+
     return manage_security_service(enable, "wscsvc");
   }
 
