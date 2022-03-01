@@ -10,6 +10,11 @@ The first solution is to install an anti-virus - but thats not the point if we a
 The next easiest solution is to use freeware thats already available on the internet - but none of them are native & open source...  
 I like open source, so I made a safe to use open source defender control.  
 
+## On windows updates
+Sometimes windows decides to update and turn itself back on.  
+A common issue is that defender sometimes doesn't want to disable tamper protection again.  
+Please try turning off tamper protection manually then running disable-defender.exe again before posting an issue.  
+
 ## What does it do?
 1. It gains TrustedInstaller permissions
 2. It will disable windefender services + smartscreen
