@@ -15,6 +15,8 @@ Sometimes windows decides to update and turn itself back on.
 A common issue is that defender control sometimes doesn't want to disable tamper protection again.  
 Please try turning off tamper protection manually then running disable-defender.exe again before posting an issue.  
 
+![Tamper](https://github.com/qtkite/defender-control/blob/main/resources/tamper.png?raw=true)
+
 ## What does it do?
 1. It gains TrustedInstaller permissions
 2. It will disable windefender services + smartscreen
