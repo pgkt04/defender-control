@@ -1,4 +1,5 @@
 // this is to poc for dumping out registry files 
+// Note that this is for defender-control older versions (1.8 i think)
 //
 
 #include "pch.h"
@@ -527,7 +528,7 @@ void thread_main()
   DetourHelper::perf_hook((PVOID*)&RegHooks::CreateProcessW_addr, RegHooks::hk_CreateProcessW);
   DetourHelper::perf_hook((PVOID*)&RegHooks::ShellExecuteExW_addr, RegHooks::hk_ShellExecuteExW);
 
-  // native hooks
+  // native hooks for 1.8, need to update patterns and offsets.
   // 
 #if 0
   RegHooks::enable_def_help_addr = (uintptr_t)GetModuleHandleA(0) + 0x6AB70;

@@ -11,7 +11,6 @@ namespace gui::dx11
 
   bool create_device(HWND hwnd)
   {
-    // create swapchain
     DXGI_SWAP_CHAIN_DESC sd;
     ZeroMemory(&sd, sizeof(sd));
     sd.BufferCount = 2;
@@ -51,23 +50,37 @@ namespace gui::dx11
     return true;
   }
 
+
+  // Destroy d3dx11 resources
+  // 
   void cleanup()
   {
   }
 
+  // Runs once to setup the dx11
+  //
   void setup(HWND hwnd)
   {
   }
 
+  // Start scene
+  //
   void start()
   {
+
   }
 
+  // Endscene
+  //
   void end()
   {
+
   }
 
+  // Handle window changes
+  //
   void resize()
   {
+
   }
 }
