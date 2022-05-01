@@ -12,6 +12,9 @@
 
 namespace wmic
 {
+  constexpr int ERR_COM_FAIL = 1;
+  constexpr int ERR_COM_SEC_FAIL = 2;
+
   enum class variant_type : int
   {
     t_bool,

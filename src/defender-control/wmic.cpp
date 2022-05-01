@@ -6,6 +6,7 @@
 
 namespace wmic
 {
+
   helper::helper(std::string wnamespace, std::string wclass, std::string wmethod)
   {
     // Initialize 
@@ -29,7 +30,7 @@ namespace wmic
 
     if (FAILED(hres))
     {
-      last_error = 1;
+      last_error = ERR_COM_FAIL;
       return;
     }
 
@@ -62,7 +63,7 @@ namespace wmic
 
     if (FAILED(hres))
     {
-      last_error = 3;
+      last_error = ERR_COM_SEC_FAIL;
       CoUninitialize();
       return;
     }
