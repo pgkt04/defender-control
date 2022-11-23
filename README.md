@@ -2,7 +2,7 @@
 Open source windows defender disabler.   
 Now you can disable windows defender permanently!   
 Tested from Windows 10 20H2.  
-Also working on Windows 11 
+Also working on Windows 11* 
 
 ## What is this project?  
 We all know that disabling windefender is very difficult since microsoft is constantly enforcing changes.  
@@ -40,9 +40,5 @@ Compile.
 You can find the first release over at the releases on the right.  
 Or alternatively click [here](https://github.com/qtkite/defender-control/releases/tag/v1.2).
 
-## TO-DO
-- [x] Disable security center
-- [x] Add silent mode
-- [x] Confirm win 11 support
-- [ ] Better cli support 
-- [ ] Build an interface
+## Windows 11
+Works for earlier versions of Windows 11. Correct registries have not been added yet for the latest version.
