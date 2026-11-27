@@ -1,6 +1,10 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches: ['**']
+    tags: ['v*']
+  pull_request:
 
 permissions:
   contents: read
@@ -26,7 +30,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        mode: [DEFENDER_ENABLE, DEFENDER_DISABLE]
+        include:
+          - mode: DEFENDER_ENABLE
+            binary: enable-defender
+          - mode: DEFENDER_DISABLE
+            binary: disable-defender
     steps:
       - uses: actions/checkout@v4
         with:
@@ -36,4 +44,34 @@ jobs:
         run: >-
           msbuild src/defender-control/defender-control.vcxproj
           -p:Configuration=Release -p:Platform=x64 -p:DefenderConfig=${{ matrix.mode }}
+          -p:OutDir=${{ github.workspace }}/dist/ -p:TargetName=${{ matrix.binary }}
           -verbosity:minimal
+      - uses: actions/upload-artifact@v4
+        if: startsWith(github.ref, 'refs/tags/v')
+        with:
+          name: ${{ matrix.binary }}
+          path: dist/${{ matrix.binary }}.exe
+          if-no-files-found: error
+          retention-days: 1
+
+  release:
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: [firewall-policy, windows-build]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: '*-defender'
+          path: dist
+          merge-multiple: true
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: >-
+          gh release create "$GITHUB_REF_NAME"
+          dist/disable-defender.exe dist/enable-defender.exe
+          --repo "$GITHUB_REPOSITORY" --verify-tag --notes-from-tag
+          --title "Defender Control $GITHUB_REF_NAME"

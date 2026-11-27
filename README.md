@@ -2,7 +2,6 @@
 Open source Windows Defender disabler. Works on Windows 10 and 11.
 
 Releases ship two binaries: `disable-defender.exe` and `enable-defender.exe`.
-Add `-firewall` to also turn Windows Firewall off or on. Otherwise, firewall settings are left alone.
 
 ## Microsoft flags this tool
 This repo has been public for years, so Defender ships a signature for it
@@ -45,6 +44,9 @@ enable-defender.exe
 
 It renames the `.OLD` files back, clears the policy and UI lockdown keys, restores
 ownership, and sets `WinDefend` to auto-start.
+
+## Windows Firewall
+Add `-firewall` to also turn Windows Firewall off or on. Otherwise, firewall settings are left alone.
 
 ## Check status
 After disabling, the Security UI is locked, so check state from a terminal:
