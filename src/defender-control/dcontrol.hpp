@@ -142,10 +142,6 @@ namespace dcontrol
   void disable_vbs();
   void enable_vbs();
 
-  // Disable/enable the Windows Firewall via registry only.
-  // The firewall service (MpsSvc/mpsdrv) is intentionally left running so that
-  // Docker, WSL, Windows Sandbox, winget and the Store keep working.
-  //
   void disable_firewall_registry();
   void enable_firewall_registry();
 

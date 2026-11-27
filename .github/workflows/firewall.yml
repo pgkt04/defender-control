@@ -1,0 +1,39 @@
+name: CI
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  firewall-policy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check firewall changes are opt-in
+        run: >-
+          pipx run --spec semgrep==1.187.0 semgrep scan
+          --metrics=off --disable-version-check --strict --error
+          --config .github/firewall-policy.yml src/defender-control
+
+  windows-build:
+    name: Windows x64 (${{ matrix.mode }})
+    runs-on: windows-2025-vs2026
+    timeout-minutes: 10
+    strategy:
+      fail-fast: false
+      matrix:
+        mode: [DEFENDER_ENABLE, DEFENDER_DISABLE]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: microsoft/setup-msbuild@v3
+      - name: Compile and link
+        run: >-
+          msbuild src/defender-control/defender-control.vcxproj
+          -p:Configuration=Release -p:Platform=x64 -p:DefenderConfig=${{ matrix.mode }}
+          -verbosity:minimal

@@ -146,6 +146,11 @@
       <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(DefenderConfig)' != ''">
+    <ClCompile>
+      <PreprocessorDefinitions>DEFENDER_CONFIG=$(DefenderConfig);%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="dcontrol.cpp" />
     <ClCompile Include="main.cpp" />

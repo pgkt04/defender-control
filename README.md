@@ -2,6 +2,7 @@
 Open source Windows Defender disabler. Works on Windows 10 and 11.
 
 Releases ship two binaries: `disable-defender.exe` and `enable-defender.exe`.
+Add `-firewall` to also turn Windows Firewall off or on. Otherwise, firewall settings are left alone.
 
 ## Microsoft flags this tool
 This repo has been public for years, so Defender ships a signature for it
@@ -67,8 +68,8 @@ Then reboot. If that does not fix it, do an in-place repair upgrade (Windows ISO
 Installation Assistant, run `setup.exe`, keep files and apps).
 
 ## Compile
-Open in Visual Studio 2022, set **Release / x64**, pick disable or enable in
-`settings.hpp`, then build.
+Open the solution in Visual Studio 2026 (v145 toolset) and select **Release / x64**.
+Pick the build mode in `settings.hpp`.
 
 ## Demo
 ![Demo](https://github.com/pgkt04/defender-control/blob/main/resources/demo.gif?raw=true)

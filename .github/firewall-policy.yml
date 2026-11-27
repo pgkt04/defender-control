@@ -1,0 +1,46 @@
+rules:
+  - id: preserve-windows-firewall
+    languages: [cpp]
+    severity: ERROR
+    message: Keep firewall writes in the opt-in firewall functions.
+    mode: taint
+    pattern-sources:
+      - patterns:
+          - pattern: $KEY
+          - metavariable-regex:
+              metavariable: $KEY
+              regex: '(?i)^(?:L|u8|u|U)?"[^"]*(?:WindowsFirewall|FirewallPolicy|EnableFirewall|Firewall and network protection)[^"]*"$'
+    pattern-propagators:
+      - pattern: swprintf_s($OUT, $FMT, ...)
+        from: $FMT
+        to: $OUT
+    pattern-sinks:
+      - patterns:
+          - pattern-either:
+              - pattern: set_policy_dword(...)
+              - pattern: set_policy_sz(...)
+              - pattern: reg::create_registry(...)
+              - pattern: reg::create_registry_hkcu(...)
+              - pattern: reg::set_keyval(...)
+              - pattern: reg::delete_key(...)
+              - pattern: reg::delete_value(...)
+          - pattern-not-inside: |
+              void disable_firewall_registry() {
+                ...
+              }
+          - pattern-not-inside: |
+              void enable_firewall_registry() {
+                ...
+              }
+  - id: firewall-requires-flag
+    languages: [cpp]
+    severity: ERROR
+    message: Call the firewall functions only when -firewall is set.
+    patterns:
+      - pattern-either:
+          - pattern: dcontrol::disable_firewall_registry(...)
+          - pattern: dcontrol::enable_firewall_registry(...)
+      - pattern-not-inside: |
+          if (firewall) {
+            ...
+          }
