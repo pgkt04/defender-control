@@ -62,6 +62,10 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
       - uses: actions/download-artifact@v4
         with:
           pattern: '*-defender'
@@ -73,5 +77,5 @@ jobs:
         run: >-
           gh release create "$GITHUB_REF_NAME"
           dist/disable-defender.exe dist/enable-defender.exe
-          --repo "$GITHUB_REPOSITORY" --verify-tag --notes-from-tag
+          --verify-tag --notes-from-tag
           --title "Defender Control $GITHUB_REF_NAME"
