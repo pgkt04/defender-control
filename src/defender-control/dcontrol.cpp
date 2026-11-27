@@ -894,23 +894,17 @@ namespace dcontrol
     }
   }
 
-  // Lock down the Windows Security UI to hide all sections
-  //
   void disable_security_ui()
   {
     printf("Locking down Windows Security UI...\n");
 
     const wchar_t* base = L"SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center";
 
-    // Hide all sections
     wchar_t path[512];
 
     swprintf_s(path, L"%ls\\Virus and threat protection", base);
     set_policy_dword(path, L"UILockdown", 1);
     set_policy_dword(path, L"HideRansomwareRecovery", 1);
-
-    swprintf_s(path, L"%ls\\Firewall and network protection", base);
-    set_policy_dword(path, L"UILockdown", 1);
 
     swprintf_s(path, L"%ls\\Device security", base);
     set_policy_dword(path, L"UILockdown", 1);
@@ -962,7 +956,6 @@ namespace dcontrol
     // Delete all the UI lockdown policy subkeys
     const wchar_t* subkeys[] = {
       L"SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Virus and threat protection",
-      L"SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Firewall and network protection",
       L"SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Device security",
       L"SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Device performance and health",
       L"SOFTWARE\\Policies\\Microsoft\\Windows Defender Security Center\\Account protection",
@@ -1204,10 +1197,6 @@ namespace dcontrol
     }
   }
 
-  // =========================================================================
-  // Tier 2 / 3 - VBS, Firewall (registry only) and scheduled tasks
-  // =========================================================================
-
   // Disable Virtualization Based Security, HVCI and System Guard secure launch
   //
   void disable_vbs()
@@ -1286,67 +1275,6 @@ namespace dcontrol
     {
       // Likewise, let Windows decide; do not force System Guard secure launch on.
       reg::delete_value(hkey, L"Enabled");
-    }
-  }
-
-  // Disable the Windows Firewall via registry ONLY.
-  //
-  // NOTE: we deliberately do NOT disable the MpsSvc / mpsdrv services here. Killing
-  // those services breaks the Microsoft Store, winget, Windows Sandbox, Docker and WSL
-  // (they rely on WFP/NAT plumbing provided by the firewall service). Turning the
-  // firewall "off" via these policy values leaves the service running, so Docker/WSL
-  // keep working.
-  //
-  void disable_firewall_registry()
-  {
-    printf("Disabling firewall via registry (service left running for Docker/WSL)...\n");
-
-    const wchar_t* profiles[] = {
-      L"StandardProfile", L"PublicProfile", L"PrivateProfile", L"DomainProfile"
-    };
-
-    for (auto& p : profiles)
-    {
-      wchar_t path[256];
-
-      swprintf_s(path, L"SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\%ls", p);
-      set_policy_dword(path, L"EnableFirewall", 0);
-
-      swprintf_s(path,
-        L"SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\%ls", p);
-      set_policy_dword(path, L"EnableFirewall", 0);
-    }
-  }
-
-  // Restore the Windows Firewall
-  //
-  void enable_firewall_registry()
-  {
-    printf("Restoring firewall...\n");
-
-    const wchar_t* profiles[] = {
-      L"StandardProfile", L"PublicProfile", L"PrivateProfile", L"DomainProfile"
-    };
-
-    // Remove the policy overrides
-    for (auto& p : profiles)
-    {
-      wchar_t path[256];
-      swprintf_s(path, L"SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\%ls", p);
-      reg::delete_key(HKEY_LOCAL_MACHINE, path);
-    }
-    reg::delete_key(HKEY_LOCAL_MACHINE, L"SOFTWARE\\Policies\\Microsoft\\WindowsFirewall");
-
-    // Re-enable the live profiles (default state is on)
-    for (auto& p : profiles)
-    {
-      wchar_t path[256];
-      swprintf_s(path,
-        L"SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\%ls", p);
-
-      HKEY hkey;
-      if (reg::create_registry(path, hkey))
-        reg::set_keyval(hkey, L"EnableFirewall", 1);
     }
   }
 

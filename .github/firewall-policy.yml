@@ -1,0 +1,25 @@
+rules:
+  - id: preserve-windows-firewall
+    languages: [cpp]
+    severity: ERROR
+    message: Leave Windows Firewall profiles, rules, and page policy unchanged.
+    mode: taint
+    pattern-sources:
+      - patterns:
+          - pattern: $KEY
+          - metavariable-regex:
+              metavariable: $KEY
+              regex: '(?i)^(?:L|u8|u|U)?"[^"]*(?:WindowsFirewall|FirewallPolicy|EnableFirewall|Firewall and network protection)[^"]*"$'
+    pattern-propagators:
+      - pattern: swprintf_s($OUT, $FMT, ...)
+        from: $FMT
+        to: $OUT
+    pattern-sinks:
+      - pattern-either:
+          - pattern: set_policy_dword(...)
+          - pattern: set_policy_sz(...)
+          - pattern: reg::create_registry(...)
+          - pattern: reg::create_registry_hkcu(...)
+          - pattern: reg::set_keyval(...)
+          - pattern: reg::delete_key(...)
+          - pattern: reg::delete_value(...)

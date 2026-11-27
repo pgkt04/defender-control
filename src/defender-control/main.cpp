@@ -152,7 +152,6 @@ int main(int argc, char** argv)
     dcontrol::disable_smartscreen_extras();
     dcontrol::disable_minifilter_altitude();
     dcontrol::disable_vbs();
-      dcontrol::disable_firewall_registry();
       dcontrol::disable_scheduled_tasks();
       dcontrol::soft_delete_binaries();
 
@@ -169,7 +168,6 @@ int main(int argc, char** argv)
     // Re-enable everything in reverse order
     dcontrol::restore_binaries();
     dcontrol::enable_scheduled_tasks();
-    dcontrol::enable_firewall_registry();
     dcontrol::enable_vbs();
     dcontrol::enable_security_ui();
     dcontrol::enable_notifications();

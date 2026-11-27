@@ -1,0 +1,20 @@
+name: Firewall policy check
+
+on: [push, pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  firewall-policy:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Check firewall registry writes in both build paths
+        run: >-
+          pipx run --spec semgrep==1.187.0 semgrep scan
+          --metrics=off --disable-version-check --strict --error
+          --config .github/firewall-policy.yml src/defender-control

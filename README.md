@@ -3,6 +3,18 @@ Open source Windows Defender disabler. Works on Windows 10 and 11.
 
 Releases ship two binaries: `disable-defender.exe` and `enable-defender.exe`.
 
+## Windows Firewall
+Builds from this revision leave firewall profiles, rules, and the firewall page's
+visibility policy unchanged. They don't undo changes made by an older build.
+If you used an older build, check each profile's effective state in PowerShell:
+
+```powershell
+Get-NetFirewallProfile -PolicyStore ActiveStore | Select-Object Name, Enabled
+```
+
+If a profile is off unexpectedly, restore your intended settings in Windows
+Firewall or ask your administrator to reapply your organization's policy.
+
 ## Microsoft flags this tool
 This repo has been public for years, so Defender ships a signature for it
 (`HackTool:Win32/DefenderControl`) and will quarantine the exe on sight. It is a category
