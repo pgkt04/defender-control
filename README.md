@@ -79,8 +79,10 @@ Then reboot. If that does not fix it, do an in-place repair upgrade (Windows ISO
 Installation Assistant, run `setup.exe`, keep files and apps).
 
 ## Compile
-Open in Visual Studio 2022, set **Release / x64**, pick disable or enable in
-`settings.hpp`, then build.
+Open the solution in Visual Studio 2026 (v145 toolset) and select **Release / x64**.
+The default mode is set in `settings.hpp`. GitHub Actions builds both modes on
+Windows using the `DefenderConfig` MSBuild property. It doesn't run either binary
+or publish any artifacts.
 
 ## Demo
 ![Demo](https://github.com/pgkt04/defender-control/blob/main/resources/demo.gif?raw=true)
