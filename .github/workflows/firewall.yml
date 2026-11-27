@@ -13,7 +13,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: false
-      - name: Check firewall registry writes in both build paths
+      - name: Check firewall changes are opt-in
         run: >-
           pipx run --spec semgrep==1.187.0 semgrep scan
           --metrics=off --disable-version-check --strict --error

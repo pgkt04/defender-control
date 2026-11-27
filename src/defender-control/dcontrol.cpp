@@ -1278,6 +1278,53 @@ namespace dcontrol
     }
   }
 
+  void disable_firewall_registry()
+  {
+    printf("Disabling Windows Firewall...\n");
+
+    const wchar_t* profiles[] = {
+      L"StandardProfile", L"PublicProfile", L"PrivateProfile", L"DomainProfile"
+    };
+
+    for (auto& profile : profiles)
+    {
+      wchar_t path[256];
+      swprintf_s(path, L"SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\%ls", profile);
+      set_policy_dword(path, L"EnableFirewall", 0);
+
+      swprintf_s(path,
+        L"SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\%ls", profile);
+      set_policy_dword(path, L"EnableFirewall", 0);
+    }
+  }
+
+  void enable_firewall_registry()
+  {
+    printf("Enabling Windows Firewall...\n");
+
+    const wchar_t* profiles[] = {
+      L"StandardProfile", L"PublicProfile", L"PrivateProfile", L"DomainProfile"
+    };
+
+    for (auto& profile : profiles)
+    {
+      wchar_t path[256];
+      swprintf_s(path, L"SOFTWARE\\Policies\\Microsoft\\WindowsFirewall\\%ls", profile);
+
+      HKEY hkey;
+      if (RegOpenKeyExW(HKEY_LOCAL_MACHINE, path, 0,
+        KEY_SET_VALUE | KEY_WOW64_64KEY, &hkey) == ERROR_SUCCESS)
+      {
+        reg::delete_value(hkey, L"EnableFirewall");
+        RegCloseKey(hkey);
+      }
+
+      swprintf_s(path,
+        L"SYSTEM\\CurrentControlSet\\Services\\SharedAccess\\Parameters\\FirewallPolicy\\%ls", profile);
+      set_policy_dword(path, L"EnableFirewall", 1);
+    }
+  }
+
   // Helper: run a command hidden and wait briefly (best-effort)
   //
   static void run_hidden(const wchar_t* command_line)

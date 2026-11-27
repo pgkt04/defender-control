@@ -2,7 +2,7 @@
 Open source Windows Defender disabler. Works on Windows 10 and 11.
 
 Releases ship two binaries: `disable-defender.exe` and `enable-defender.exe`.
-Neither tool changes Windows Firewall settings. If you used an older version, check that your firewall is on.
+Add `-firewall` to also turn Windows Firewall off or on. Otherwise, firewall settings are left alone.
 
 ## Microsoft flags this tool
 This repo has been public for years, so Defender ships a signature for it

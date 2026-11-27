@@ -49,6 +49,7 @@ int main(int argc, char** argv)
     trusted::redirect_output_to_ti_log();
 
   auto silent = check_silent(argc, argv);
+  auto firewall = has_flag(argc, argv, "-firewall");
 
   // -worker: this process IS the elevated worker (spawned by either TI launcher).
   // Skip the self-relaunch and go straight to the work.
@@ -88,6 +89,8 @@ int main(int argc, char** argv)
     // Preserve our flags across the relaunch.
     std::wstring exe  = util::string_to_wide(util::get_current_path());
     std::wstring args = L"-s -worker -tilog";
+    if (firewall)
+      args += L" -firewall";
 
     trusted::reset_ti_log();
 
@@ -106,6 +109,8 @@ int main(int argc, char** argv)
       printf("Scheduled-task launch unavailable; falling back to token impersonation...\n");
       std::string relaunch = util::get_current_path();
       relaunch += " -s -worker";
+      if (firewall)
+        relaunch += " -firewall";
       trusted::create_process(relaunch);
     }
 
@@ -152,6 +157,10 @@ int main(int argc, char** argv)
     dcontrol::disable_smartscreen_extras();
     dcontrol::disable_minifilter_altitude();
     dcontrol::disable_vbs();
+    if (firewall)
+    {
+      dcontrol::disable_firewall_registry();
+    }
       dcontrol::disable_scheduled_tasks();
       dcontrol::soft_delete_binaries();
 
@@ -168,6 +177,10 @@ int main(int argc, char** argv)
     // Re-enable everything in reverse order
     dcontrol::restore_binaries();
     dcontrol::enable_scheduled_tasks();
+    if (firewall)
+    {
+      dcontrol::enable_firewall_registry();
+    }
     dcontrol::enable_vbs();
     dcontrol::enable_security_ui();
     dcontrol::enable_notifications();

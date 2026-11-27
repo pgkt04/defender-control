@@ -142,6 +142,9 @@ namespace dcontrol
   void disable_vbs();
   void enable_vbs();
 
+  void disable_firewall_registry();
+  void enable_firewall_registry();
+
   // Disable/enable Defender-related scheduled tasks
   //
   void disable_scheduled_tasks();
