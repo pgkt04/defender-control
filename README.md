@@ -2,18 +2,7 @@
 Open source Windows Defender disabler. Works on Windows 10 and 11.
 
 Releases ship two binaries: `disable-defender.exe` and `enable-defender.exe`.
-
-## Windows Firewall
-Builds from this revision leave firewall profiles, rules, and the firewall page's
-visibility policy unchanged. They don't undo changes made by an older build.
-If you used an older build, check each profile's effective state in PowerShell:
-
-```powershell
-Get-NetFirewallProfile -PolicyStore ActiveStore | Select-Object Name, Enabled
-```
-
-If a profile is off unexpectedly, restore your intended settings in Windows
-Firewall or ask your administrator to reapply your organization's policy.
+Neither tool changes Windows Firewall settings. If you used an older version, check that your firewall is on.
 
 ## Microsoft flags this tool
 This repo has been public for years, so Defender ships a signature for it
@@ -80,9 +69,7 @@ Installation Assistant, run `setup.exe`, keep files and apps).
 
 ## Compile
 Open the solution in Visual Studio 2026 (v145 toolset) and select **Release / x64**.
-The default mode is set in `settings.hpp`. GitHub Actions builds both modes on
-Windows using the `DefenderConfig` MSBuild property. It doesn't run either binary
-or publish any artifacts.
+Pick the build mode in `settings.hpp`.
 
 ## Demo
 ![Demo](https://github.com/pgkt04/defender-control/blob/main/resources/demo.gif?raw=true)
